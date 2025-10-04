@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Venkat Express Luxury Design System */
+    --background: 246 20% 97%;
+    --foreground: 210 40% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 12%;
+
+    /* Deep Navy Primary */
+    --primary: 210 80% 15%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 210 80% 20%;
+
+    /* Gold Accent */
+    --accent: 45 85% 52%;
+    --accent-foreground: 210 80% 15%;
+    --accent-hover: 45 85% 58%;
+
+    --secondary: 210 20% 90%;
+    --secondary-foreground: 210 40% 12%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 15% 45%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 45 85% 52%;
+
+    --radius: 0.75rem;
+
+    /* Premium shadows */
+    --shadow-sm: 0 2px 8px -2px hsl(210 80% 15% / 0.08);
+    --shadow-md: 0 4px 16px -4px hsl(210 80% 15% / 0.12);
+    --shadow-lg: 0 8px 32px -8px hsl(210 80% 15% / 0.16);
+    --shadow-gold: 0 4px 24px -4px hsl(45 85% 52% / 0.3);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 80% 15%), hsl(210 80% 25%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 85% 52%), hsl(45 85% 62%));
+    --gradient-hero: linear-gradient(180deg, hsl(246 20% 97%), hsl(210 20% 90%));
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 210 40% 8%;
+    --foreground: 210 20% 95%;
+
+    --card: 210 35% 12%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 210 35% 12%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 210 20% 95%;
+    --primary-foreground: 210 80% 15%;
+    --primary-hover: 210 20% 90%;
+
+    --accent: 45 85% 52%;
+    --accent-foreground: 210 80% 15%;
+    --accent-hover: 45 85% 58%;
+
+    --secondary: 210 30% 18%;
+    --secondary-foreground: 210 20% 95%;
+
+    --muted: 210 30% 15%;
+    --muted-foreground: 210 15% 60%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 20% 95%;
+
+    --border: 210 30% 20%;
+    --input: 210 30% 20%;
+    --ring: 45 85% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .shadow-premium {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-premium-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-premium-lg;
+  }
+}
