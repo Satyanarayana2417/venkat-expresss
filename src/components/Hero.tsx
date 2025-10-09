@@ -78,10 +78,11 @@ export const Hero = () => {
                 buttonText=""
                 buttonUrl="/services"
                 tag=""
-                image="https://i.ibb.co/fz5wyK90/IMG-20251004-152359.webp"
+                image="/hero-center-card.png"
                 textColor="text-white"
                 className="h-full w-full"
                 noGradient={true}
+                imagePosition="left-center"
               />
             </motion.div>
 
