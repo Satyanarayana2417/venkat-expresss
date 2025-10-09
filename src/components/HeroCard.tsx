@@ -14,6 +14,9 @@ interface HeroCardProps {
   className?: string;
   bgColor?: string;
   textColor?: string;
+  noGradient?: boolean;
+  smallText?: boolean;
+  useYellowGradient?: boolean;
 }
 
 export const HeroCard = ({
@@ -27,12 +30,18 @@ export const HeroCard = ({
   className,
   bgColor = 'bg-card',
   textColor = 'text-card-foreground',
+  noGradient = false,
+  smallText = false,
+  useYellowGradient = false,
 }: HeroCardProps) => {
   const CardContent = () => (
     <div
       className={cn(
         'relative h-full rounded-xl overflow-hidden shadow-premium transition-all duration-300 hover:-translate-y-1 hover:shadow-premium-lg group',
-        bgColor,
+        useYellowGradient 
+          ? 'bg-gradient-to-r from-yellow-50 via-yellow-100 to-yellow-50 border border-yellow-200'
+          : 'border border-gray-100 hover:border-gray-200',
+        !useYellowGradient && bgColor,
         className
       )}
     >
@@ -44,7 +53,9 @@ export const HeroCard = ({
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          {!noGradient && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          )}
         </div>
       )}
       
@@ -55,17 +66,21 @@ export const HeroCard = ({
           </Badge>
         )}
         
-        <h3 className="font-heading font-bold text-xl md:text-2xl mb-4 leading-tight">
+        <h3 className={cn(
+          "font-heading font-bold mb-4 leading-tight",
+          smallText ? "text-base md:text-lg" : "text-xl md:text-2xl"
+        )}>
           {title}
         </h3>
         
         {buttonText && (
           <Link to={buttonUrl}>
             <Button 
-              className="gradient-gold hover:shadow-gold w-fit transition-all duration-300"
+              className="bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 w-fit transition-all duration-300 inline-flex items-center gap-2"
               size="lg"
             >
               {buttonText}
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </Button>
           </Link>
         )}

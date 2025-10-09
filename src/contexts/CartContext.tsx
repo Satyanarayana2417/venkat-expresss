@@ -9,7 +9,9 @@ export interface CartItem {
   title: string;
   qty: number;
   priceINR: number;
+  originalPrice?: number; // Added for discount display
   image: string;
+  slug?: string; // Added for wishlist functionality
 }
 
 interface CartContextType {
@@ -34,38 +36,68 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [items, setItems] = useState<CartItem[]>([]);
+  const CART_STORAGE_KEY = 'venkat-express-cart';
+  
+  // Initialize cart from localStorage first
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error('Failed to load cart from localStorage:', error);
+      return [];
+    }
+  });
 
   // Load cart from Firestore when user signs in
   useEffect(() => {
     if (user) {
-      loadCart();
-    } else {
-      setItems([]);
+      loadCartFromFirestore();
     }
+    // Don't clear cart when user logs out - keep it in localStorage
   }, [user]);
 
-  // Save cart to Firestore whenever it changes
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
+    }
+  }, [items]);
+
+  // Save cart to Firestore whenever it changes (for logged-in users)
   useEffect(() => {
     if (user && items.length >= 0) {
-      saveCart();
+      saveCartToFirestore();
     }
   }, [items, user]);
 
-  const loadCart = async () => {
+  const loadCartFromFirestore = async () => {
     if (!user) return;
 
     try {
       const cartDoc = await getDoc(doc(db, 'carts', user.uid));
       if (cartDoc.exists()) {
-        setItems(cartDoc.data().items || []);
+        const firestoreItems = cartDoc.data().items || [];
+        
+        // Merge Firestore cart with localStorage cart (prioritize Firestore for logged-in users)
+        if (firestoreItems.length > 0) {
+          setItems(firestoreItems);
+        } else {
+          // If Firestore is empty but localStorage has items, sync them to Firestore
+          const localItems = items;
+          if (localItems.length > 0) {
+            setItems(localItems);
+          }
+        }
       }
     } catch (error) {
-      console.error('Failed to load cart:', error);
+      console.error('Failed to load cart from Firestore:', error);
     }
   };
 
-  const saveCart = async () => {
+  const saveCartToFirestore = async () => {
     if (!user) return;
 
     try {
@@ -75,7 +107,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
-      console.error('Failed to save cart:', error);
+      console.error('Failed to save cart to Firestore:', error);
     }
   };
 

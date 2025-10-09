@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Venkat Express Luxury Design System */
-    --background: 246 20% 97%;
+    --background: 0 0% 100%;
     --foreground: 210 40% 12%;
 
     --card: 0 0% 100%;
@@ -133,5 +133,15 @@ All colors MUST be HSL.
 
   .hover-lift:hover {
     @apply -translate-y-1 shadow-premium-lg;
+  }
+
+  /* Hide scrollbar for carousel */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

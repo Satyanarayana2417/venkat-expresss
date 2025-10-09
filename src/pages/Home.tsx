@@ -1,61 +1,39 @@
 import { Hero } from '@/components/Hero';
-import { ProductCard } from '@/components/ProductCard';
-import { useProducts } from '@/hooks/useProducts';
+import { FeaturedProducts } from '@/components/FeaturedProducts';
+import { ProductShowcase } from '@/components/ProductShowcase';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Star } from 'lucide-react';
 
 const Home = () => {
-  const { products, loading } = useProducts();
-  const featuredProducts = products.slice(0, 4);
   return (
     <div>
       <Hero />
 
-      {/* Featured Products */}
-      <section className="container mx-auto px-4 lg:px-6 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
-            <p className="text-muted-foreground">Handpicked premium items from India</p>
-          </div>
-          <Link to="/products">
-            <Button variant="outline" className="hidden sm:flex">
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+      {/* Featured Products with Carousels */}
+      <FeaturedProducts />
 
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      {/* Sourcing CTA Banner */}
+      <section className="container mx-auto px-4 lg:px-6 py-4">
+        <div className="w-full bg-gradient-to-r from-yellow-50 via-yellow-100 to-yellow-50 rounded-lg shadow-sm border border-yellow-200 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[180px]">
+          <div className="flex-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              Can't find it? Let us source it for you.
+            </h2>
+            <p className="text-sm md:text-base text-gray-600">
+              Looking for something specific from India? Our sourcing experts can help you find authentic products and deliver them worldwide.
+            </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
-          </div>
-        )}
-
-        <div className="text-center mt-8 sm:hidden">
-          <Link to="/products">
-            <Button>
-              View All Products
-              <ArrowRight className="ml-2 h-4 w-4" />
+          <Link to="/services">
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-5 text-sm whitespace-nowrap">
+              Make a Request →
             </Button>
           </Link>
         </div>
       </section>
+
+      {/* Product Showcase - Categories and Featured Products */}
+      <ProductShowcase />
 
       {/* Services Overview */}
       <section className="bg-muted/50 py-16">
