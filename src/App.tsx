@@ -94,7 +94,7 @@ const Layout = () => {
         </Routes>
       </main>
       {!isAdminPage && (
-        <div className={(isFoodOrDecorativePage || isProductsPage) ? 'hidden md:block' : ''}>
+        <div className={(isFoodOrDecorativePage || isProductsPage || isCartPage || isProfilePage) ? 'hidden md:block' : ''}>
           <Footer />
         </div>
       )}

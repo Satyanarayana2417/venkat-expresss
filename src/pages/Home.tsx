@@ -3,7 +3,6 @@ import { FeaturedProducts } from '@/components/FeaturedProducts';
 import { ProductShowcase } from '@/components/ProductShowcase';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Star } from 'lucide-react';
 
 const Home = () => {
   return (
@@ -41,18 +40,18 @@ const Home = () => {
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Three simple steps to get authentic Indian products delivered anywhere in the world
+              Four simple steps to get authentic Indian products delivered anywhere in the world
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16 rounded-full gradient-gold flex items-center justify-center mx-auto mb-4 shadow-gold">
                 <span className="text-2xl font-bold text-primary">1</span>
               </div>
-              <h3 className="font-heading font-semibold text-xl mb-2">Browse & Select</h3>
+              <h3 className="font-heading font-semibold text-xl mb-2">You Request or Shop</h3>
               <p className="text-sm text-muted-foreground">
-                Choose from our curated collection or request specific items you want
+                Browse our products or tell us what specific items you need from India. We source everything with care.
               </p>
             </div>
 
@@ -60,9 +59,9 @@ const Home = () => {
               <div className="w-16 h-16 rounded-full gradient-gold flex items-center justify-center mx-auto mb-4 shadow-gold">
                 <span className="text-2xl font-bold text-primary">2</span>
               </div>
-              <h3 className="font-heading font-semibold text-xl mb-2">We Purchase</h3>
+              <h3 className="font-heading font-semibold text-xl mb-2">We Pack with Care</h3>
               <p className="text-sm text-muted-foreground">
-                Our team sources authentic products from trusted vendors in India
+                Our expert team carefully packs your items using premium materials to ensure they arrive in perfect condition.
               </p>
             </div>
 
@@ -70,9 +69,19 @@ const Home = () => {
               <div className="w-16 h-16 rounded-full gradient-gold flex items-center justify-center mx-auto mb-4 shadow-gold">
                 <span className="text-2xl font-bold text-primary">3</span>
               </div>
-              <h3 className="font-heading font-semibold text-xl mb-2">Global Delivery</h3>
+              <h3 className="font-heading font-semibold text-xl mb-2">Express Shipping</h3>
               <p className="text-sm text-muted-foreground">
-                Secure packaging and reliable shipping to your doorstep with tracking
+                We use trusted international courier services to ship your package with full tracking and insurance.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-full gradient-gold flex items-center justify-center mx-auto mb-4 shadow-gold">
+                <span className="text-2xl font-bold text-primary">4</span>
+              </div>
+              <h3 className="font-heading font-semibold text-xl mb-2">Delivered Worldwide</h3>
+              <p className="text-sm text-muted-foreground">
+                Receive your authentic Indian items anywhere in the world, typically within 7-14 business days.
               </p>
             </div>
           </div>
@@ -83,63 +92,6 @@ const Home = () => {
                 Learn More About Our Services
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Branch Highlight */}
-      <section className="container mx-auto px-4 lg:px-6 py-16">
-        <div className="bg-primary text-primary-foreground rounded-2xl p-8 md:p-12 shadow-premium-lg">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-                Visit Our Hyderabad Branch
-              </h2>
-              <p className="text-primary-foreground/90 mb-6">
-                Schedule a pickup or visit our branch for in-person assistance. Our team is ready to help with all your shipping and purchasing needs.
-              </p>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <Star className="h-5 w-5 text-accent mt-0.5" />
-                  <span>In-person consultation</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Star className="h-5 w-5 text-accent mt-0.5" />
-                  <span>Package inspection & verification</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Star className="h-5 w-5 text-accent mt-0.5" />
-                  <span>Flexible pickup scheduling</span>
-                </li>
-              </ul>
-              <Link to="/branch">
-                <Button variant="outline" size="lg" className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-                  View Branch Details
-                </Button>
-              </Link>
-            </div>
-            <div className="bg-primary-foreground/10 rounded-xl p-6 backdrop-blur-sm border border-primary-foreground/20">
-              <h3 className="font-heading font-semibold text-xl mb-4">Contact Information</h3>
-              <div className="space-y-3 text-sm">
-                <p>
-                  <span className="font-medium">Address:</span><br />
-                  Hyderabad, Telangana, India
-                </p>
-                <p>
-                  <span className="font-medium">Hours:</span><br />
-                  Mon-Sat: 9:00 AM - 7:00 PM<br />
-                  Sunday: Closed
-                </p>
-                <p>
-                  <span className="font-medium">Phone:</span><br />
-                  +91 XXXX XXXXXX
-                </p>
-                <p>
-                  <span className="font-medium">Email:</span><br />
-                  hyderabad@venkatexpress.com
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
