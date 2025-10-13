@@ -27,6 +27,7 @@ import History from "./pages/History";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import NotFound from "./pages/NotFound";
+import TrackOrder from "./pages/TrackOrder";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const Layout = () => {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/prohibited" element={<ProhibitedItems />} />
+          <Route path="/track-order" element={<TrackOrder />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

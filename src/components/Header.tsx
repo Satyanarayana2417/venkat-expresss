@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LocationSelector } from './LocationSelector';
 import { ShoppingCart, User, Menu, Package, Shield, Search, Heart, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
@@ -18,6 +18,10 @@ export const Header = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileLocation, setMobileLocation] = useState(getDefaultLocation());
+  const location = useLocation();
+  
+  // Check if we're on the track order page
+  const isTrackOrderPage = location.pathname === '/track-order';
 
   // Load location on mount and listen for updates
   useEffect(() => {
@@ -107,7 +111,7 @@ export const Header = () => {
               {/* User Actions - Right Section */}
               <div className="flex items-center gap-8 flex-shrink-0">
                 {/* Track Order */}
-                <Link to="/dashboard" className="flex flex-col items-center gap-1 hover:text-primary transition-colors group">
+                <Link to="/track-order" className="flex flex-col items-center gap-1 hover:text-primary transition-colors group">
                   <Package className="h-5 w-5 group-hover:scale-110 transition-transform" />
                   <span className="text-xs">Track Order</span>
                 </Link>
@@ -119,7 +123,7 @@ export const Header = () => {
                 </Link>
 
                 {/* Sign In / User */}
-                {user ? (
+                {!isTrackOrderPage && user ? (
                   <div className="relative group">
                     <button className="flex flex-col items-center gap-1 hover:text-primary transition-colors">
                       <User className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -150,7 +154,7 @@ export const Header = () => {
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : !isTrackOrderPage && (
                   <Link to="/auth" className="flex flex-col items-center gap-1 hover:text-primary transition-colors group">
                     <User className="h-5 w-5 group-hover:scale-110 transition-transform" />
                     <span className="text-xs">Sign In</span>
@@ -193,7 +197,7 @@ export const Header = () => {
                   Courier Services
                 </Link>
                 <Link
-                  to="/dashboard"
+                  to="/track-order"
                   className="px-4 py-1.5 rounded-full bg-white border border-gray-200 hover:border-primary hover:shadow-md text-sm font-medium transition-all"
                 >
                   Track Order
@@ -316,7 +320,7 @@ export const Header = () => {
                   Courier Services
                 </Link>
                 <Link
-                  to="/dashboard"
+                  to="/track-order"
                   className="px-4 py-1.5 rounded-full bg-white border border-gray-200 hover:border-primary text-xs font-medium transition-all"
                 >
                   Track Order
@@ -485,7 +489,7 @@ export const Header = () => {
                     </div>
 
                     {/* User Section - Hidden on mobile */}
-                    {user ? (
+                    {!isTrackOrderPage && user ? (
                       <div className="mb-6 p-4 bg-gray-50 rounded-lg hidden">
                         <div className="flex items-center gap-3 mb-3">
                           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
@@ -523,7 +527,7 @@ export const Header = () => {
                           )}
                         </div>
                       </div>
-                    ) : (
+                    ) : !isTrackOrderPage && (
                       <Link
                         to="/auth"
                         onClick={() => setShowMobileMenu(false)}
@@ -550,7 +554,7 @@ export const Header = () => {
                         Courier Services
                       </Link>
                       <Link
-                        to="/dashboard"
+                        to="/track-order"
                         className="hidden"
                         onClick={() => setShowMobileMenu(false)}
                       >

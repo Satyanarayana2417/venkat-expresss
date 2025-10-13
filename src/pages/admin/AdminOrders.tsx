@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
+import { AdminOrderDetail } from './AdminOrderDetail';
 
 interface Order {
   id: string;
@@ -36,6 +37,8 @@ export const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalOrderCount, setTotalOrderCount] = useState(0);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   // Real-time listener for orders
   useEffect(() => {
@@ -222,8 +225,15 @@ export const AdminOrders = () => {
                             ₹{order.total.toLocaleString('en-IN')}
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button variant="outline" size="sm">
-                              View Details
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setSelectedOrderId(order.id);
+                                setIsDetailOpen(true);
+                              }}
+                            >
+                              Manage Tracking
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -244,6 +254,18 @@ export const AdminOrders = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Order Detail Dialog */}
+        {selectedOrderId && (
+          <AdminOrderDetail
+            orderId={selectedOrderId}
+            isOpen={isDetailOpen}
+            onClose={() => {
+              setIsDetailOpen(false);
+              setSelectedOrderId(null);
+            }}
+          />
+        )}
       </div>
     </AdminLayout>
   );

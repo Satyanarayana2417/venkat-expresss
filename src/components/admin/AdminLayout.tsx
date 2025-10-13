@@ -15,7 +15,8 @@ import {
   User,
   FileText,
   BarChart3,
-  Tag
+  Tag,
+  FileSpreadsheet
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -40,6 +41,7 @@ const navigation = [
   { name: 'Products', href: '/admin/products', icon: Package },
   { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { name: 'Requests', href: '/admin/requests', icon: FileText },
+  { name: 'Quote Requests', href: '/admin/quotes', icon: FileSpreadsheet },
   { name: 'Users', href: '/admin/users', icon: Users },
   { name: 'Discounts', href: '/admin/discounts', icon: Tag },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
