@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc, deleteDoc, getDocs, serverTimestamp, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
@@ -19,6 +19,7 @@ interface WishlistContextType {
   removeFromWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
   toggleWishlist: (item: Omit<WishlistItem, 'addedAt'>) => void;
+  clearUIState: () => void; // New function for logout
   totalItems: number;
 }
 
@@ -33,66 +34,166 @@ export const useWishlist = () => {
 };
 
 export const WishlistProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
+  const { user, registerLogoutCallback } = useAuth();
+  const WISHLIST_STORAGE_KEY = 'venkat-express-wishlist-guest';
+  
+  // Initialize wishlist state (empty by default)
   const [items, setItems] = useState<WishlistItem[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load wishlist from Firestore when user signs in
+  // Register clearUIState callback for logout
   useEffect(() => {
+    registerLogoutCallback(() => {
+      clearUIState();
+    });
+  }, []);
+
+  // Load wishlist based on user authentication state
+  useEffect(() => {
+    const initializeWishlist = async () => {
+      if (user) {
+        // LOGGED IN USER: Load from Firestore subcollection
+        await loadWishlistFromFirestore();
+      } else {
+        // GUEST USER: Load from localStorage
+        loadWishlistFromLocalStorage();
+      }
+      setIsInitialized(true);
+    };
+
+    initializeWishlist();
+  }, [user]);
+
+  // Save wishlist whenever it changes (conditional on user state)
+  useEffect(() => {
+    if (!isInitialized) return; // Don't save during initialization
+
     if (user) {
-      loadWishlist();
+      // LOGGED IN: Save to Firestore subcollection
+      saveWishlistToFirestore();
     } else {
-      // Load from localStorage for guest users
-      const guestWishlist = localStorage.getItem('guestWishlist');
-      if (guestWishlist) {
-        setItems(JSON.parse(guestWishlist));
+      // GUEST: Save to localStorage
+      saveWishlistToLocalStorage();
+    }
+  }, [items, user, isInitialized]);
+
+  // Load wishlist from GUEST localStorage
+  const loadWishlistFromLocalStorage = () => {
+    try {
+      const savedWishlist = localStorage.getItem(WISHLIST_STORAGE_KEY);
+      if (savedWishlist) {
+        const parsedWishlist = JSON.parse(savedWishlist);
+        setItems(parsedWishlist);
+        console.log('✅ Guest wishlist loaded from localStorage:', parsedWishlist.length, 'items');
       } else {
         setItems([]);
       }
-    }
-  }, [user]);
-
-  // Save wishlist whenever it changes
-  useEffect(() => {
-    if (user) {
-      saveWishlist();
-    } else {
-      // Save to localStorage for guest users
-      localStorage.setItem('guestWishlist', JSON.stringify(items));
-    }
-  }, [items, user]);
-
-  const loadWishlist = async () => {
-    if (!user) return;
-
-    try {
-      const wishlistDoc = await getDoc(doc(db, 'wishlists', user.uid));
-      if (wishlistDoc.exists()) {
-        setItems(wishlistDoc.data().items || []);
-      } else {
-        // Migrate guest wishlist to user account
-        const guestWishlist = localStorage.getItem('guestWishlist');
-        if (guestWishlist) {
-          const guestItems = JSON.parse(guestWishlist);
-          setItems(guestItems);
-          localStorage.removeItem('guestWishlist');
-        }
-      }
     } catch (error) {
-      console.error('Failed to load wishlist:', error);
+      console.error('Failed to load guest wishlist from localStorage:', error);
+      setItems([]);
     }
   };
 
-  const saveWishlist = async () => {
+  // Save wishlist to GUEST localStorage
+  const saveWishlistToLocalStorage = () => {
+    try {
+      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.error('Failed to save guest wishlist to localStorage:', error);
+    }
+  };
+
+  // Load wishlist from LOGGED IN USER Firestore subcollection
+  const loadWishlistFromFirestore = async () => {
     if (!user) return;
 
     try {
-      await setDoc(doc(db, 'wishlists', user.uid), {
-        uid: user.uid,
-        items,
-        updatedAt: serverTimestamp(),
-      });
+      // Load from /users/{userId}/wishlist subcollection
+      const wishlistCollectionRef = collection(db, 'users', user.uid, 'wishlist');
+      const wishlistSnapshot = await getDocs(wishlistCollectionRef);
+      
+      if (!wishlistSnapshot.empty) {
+        // Load wishlist items from subcollection
+        const firestoreItems: WishlistItem[] = wishlistSnapshot.docs.map(doc => doc.data() as WishlistItem);
+        setItems(firestoreItems);
+        console.log('✅ User wishlist loaded from Firestore:', firestoreItems.length, 'items');
+      } else {
+        // No wishlist in Firestore, check if guest had items to migrate
+        const guestWishlist = localStorage.getItem(WISHLIST_STORAGE_KEY);
+        if (guestWishlist) {
+          const guestItems: WishlistItem[] = JSON.parse(guestWishlist);
+          if (guestItems.length > 0) {
+            // MIGRATE guest wishlist to Firestore
+            console.log('🔄 Migrating guest wishlist to user account:', guestItems.length, 'items');
+            setItems(guestItems);
+            await migrateGuestWishlistToFirestore(guestItems);
+            // Clear guest wishlist after successful migration
+            localStorage.removeItem(WISHLIST_STORAGE_KEY);
+            console.log('✅ Guest wishlist migrated and cleared from localStorage');
+          } else {
+            setItems([]);
+          }
+        } else {
+          setItems([]);
+        }
+      }
     } catch (error) {
-      console.error('Failed to save wishlist:', error);
+      console.error('Failed to load wishlist from Firestore:', error);
+      setItems([]);
+    }
+  };
+
+  // Save wishlist to LOGGED IN USER Firestore subcollection
+  const saveWishlistToFirestore = async () => {
+    if (!user) return;
+
+    try {
+      const batch = writeBatch(db);
+      const wishlistCollectionRef = collection(db, 'users', user.uid, 'wishlist');
+      
+      // First, get all existing wishlist items to delete them
+      const existingWishlistSnapshot = await getDocs(wishlistCollectionRef);
+      existingWishlistSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      // Then, add all current wishlist items
+      items.forEach(item => {
+        const itemDocRef = doc(wishlistCollectionRef, item.productId);
+        batch.set(itemDocRef, {
+          ...item,
+          updatedAt: serverTimestamp(),
+        });
+      });
+
+      await batch.commit();
+      console.log('✅ Wishlist saved to Firestore subcollection:', items.length, 'items');
+    } catch (error) {
+      console.error('Failed to save wishlist to Firestore:', error);
+    }
+  };
+
+  // Migrate guest wishlist items to Firestore subcollection
+  const migrateGuestWishlistToFirestore = async (guestItems: WishlistItem[]) => {
+    if (!user) return;
+
+    try {
+      const batch = writeBatch(db);
+      const wishlistCollectionRef = collection(db, 'users', user.uid, 'wishlist');
+      
+      guestItems.forEach(item => {
+        const itemDocRef = doc(wishlistCollectionRef, item.productId);
+        batch.set(itemDocRef, {
+          ...item,
+          updatedAt: serverTimestamp(),
+        });
+      });
+
+      await batch.commit();
+      console.log('✅ Guest wishlist migrated to Firestore subcollection');
+    } catch (error) {
+      console.error('Failed to migrate guest wishlist to Firestore:', error);
+      throw error;
     }
   };
 
@@ -130,6 +231,13 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Clear UI state only (for logout) - does NOT delete Firestore data
+  const clearUIState = () => {
+    setItems([]);
+    setIsInitialized(false);
+    console.log('🔒 Wishlist UI state cleared (logout)');
+  };
+
   const totalItems = items.length;
 
   return (
@@ -140,6 +248,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
         removeFromWishlist,
         isInWishlist,
         toggleWishlist,
+        clearUIState,
         totalItems,
       }}
     >

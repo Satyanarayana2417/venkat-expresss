@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,11 @@ import { Package, Loader2 } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn } = useAuth();
+  
+  // Get return path from location state
+  const from = (location.state as any)?.from || '/home';
   
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -40,7 +44,8 @@ const Login = () => {
     setLoading(true);
     try {
       await signIn(formData.email, formData.password);
-      navigate('/home');
+      // Redirect to return path or home
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Login error:', error);
     } finally {

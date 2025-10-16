@@ -632,6 +632,12 @@ _Your Reliable International Courier Partner_
                         {serviceTypeLabels[selectedQuote.serviceType] || selectedQuote.serviceType}
                       </p>
                     </div>
+                    {selectedQuote.itemName && (
+                      <div>
+                        <Label className="text-xs text-gray-500">Item Name</Label>
+                        <p className="font-medium">{selectedQuote.itemName}</p>
+                      </div>
+                    )}
                     <div>
                       <Label className="text-xs text-gray-500">Package Weight</Label>
                       <p className="font-medium">{selectedQuote.weight} kg</p>

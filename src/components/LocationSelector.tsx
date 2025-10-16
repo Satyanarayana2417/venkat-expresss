@@ -254,14 +254,14 @@ export const LocationSelector = () => {
         </svg>
       </button>
 
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog open={showDialog} onOpenChange={(open) => setShowDialog(open)}>
+        <DialogContent className="sm:max-w-md max-w-[90vw]" onPointerDownOutside={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle className="font-heading flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-primary" />
+            <DialogTitle className="font-heading flex items-center gap-2 text-base md:text-lg">
+              <MapPin className="h-4 w-4 md:h-5 md:w-5 text-primary" />
               Select Your Location
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-xs md:text-sm">
               Help us show you accurate shipping information and delivery estimates by sharing your location.
             </DialogDescription>
           </DialogHeader>
@@ -291,17 +291,17 @@ export const LocationSelector = () => {
                 <Button
                   onClick={requestLocation}
                   disabled={isLoading}
-                  className="gradient-gold hover:shadow-gold w-full"
-                  size="lg"
+                  className="gradient-gold hover:shadow-gold w-full text-sm md:text-base"
+                  size="default"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-3 w-3 md:h-4 md:w-4 animate-spin" />
                       Detecting Location...
                     </>
                   ) : (
                     <>
-                      <Navigation className="mr-2 h-4 w-4" />
+                      <Navigation className="mr-2 h-3 w-3 md:h-4 md:w-4" />
                       Use My Current Location
                     </>
                   )}
@@ -322,14 +322,14 @@ export const LocationSelector = () => {
               {/* Manual Selection Form */}
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Country</label>
+                  <label className="text-xs md:text-sm font-medium mb-1.5 block">Country</label>
                   <Select value={selectedCountry} onValueChange={handleCountryChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-sm">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
                       {countries.map((country) => (
-                        <SelectItem key={country.value} value={country.value}>
+                        <SelectItem key={country.value} value={country.value} className="text-sm">
                           {country.label}
                         </SelectItem>
                       ))}
@@ -338,16 +338,16 @@ export const LocationSelector = () => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">State / Province</label>
+                  <label className="text-xs md:text-sm font-medium mb-1.5 block">State / Province</label>
                   <Select value={selectedState} onValueChange={handleStateChange}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-sm">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
                       {countries
                         .find(c => c.value === selectedCountry)
                         ?.states.map((state) => (
-                          <SelectItem key={state} value={state}>
+                          <SelectItem key={state} value={state} className="text-sm">
                             {state}
                           </SelectItem>
                         ))}
@@ -356,16 +356,16 @@ export const LocationSelector = () => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">City</label>
+                  <label className="text-xs md:text-sm font-medium mb-1.5 block">City</label>
                   <Select value={selectedCity} onValueChange={setSelectedCity}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 md:h-10 text-sm">
                       <SelectValue placeholder="Select city" />
                     </SelectTrigger>
                     <SelectContent>
                       {countries
                         .find(c => c.value === selectedCountry)
                         ?.cities.map((city) => (
-                          <SelectItem key={city} value={city}>
+                          <SelectItem key={city} value={city} className="text-sm">
                             {city}
                           </SelectItem>
                         ))}
@@ -376,11 +376,11 @@ export const LocationSelector = () => {
                 <Button
                   onClick={handleManualSelection}
                   variant="outline"
-                  className="w-full"
-                  size="lg"
+                  className="w-full text-sm md:text-base"
+                  size="default"
                   disabled={isLoading}
                 >
-                  <MapPin className="mr-2 h-4 w-4" />
+                  <MapPin className="mr-2 h-3 w-3 md:h-4 md:w-4" />
                   Confirm Location
                 </Button>
               </div>

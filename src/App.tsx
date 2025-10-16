@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { BottomNavbar } from "./components/BottomNavbar";
@@ -28,29 +29,9 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import NotFound from "./pages/NotFound";
 import TrackOrder from "./pages/TrackOrder";
+import ProhibitedItems from "./pages/ProhibitedItems";
 
 const queryClient = new QueryClient();
-
-// Placeholder component for missing page
-const ProhibitedItems = () => (
-  <div className="container mx-auto px-4 py-16">
-    <h1 className="text-4xl font-bold mb-4">Prohibited Items</h1>
-    <p className="text-muted-foreground mb-6">Please review the list of items that cannot be shipped through our courier service.</p>
-    <div className="prose max-w-none">
-      <h2 className="text-2xl font-semibold mb-3">Items Not Allowed for Shipping</h2>
-      <ul className="space-y-2">
-        <li>Dangerous goods and hazardous materials</li>
-        <li>Explosives, firearms, and ammunition</li>
-        <li>Perishable items without proper packaging</li>
-        <li>Illegal drugs and substances</li>
-        <li>Currency and negotiable instruments</li>
-        <li>Antiques and irreplaceable items</li>
-        <li>Liquids in glass containers (unless properly packaged)</li>
-        <li>Live animals or plants</li>
-      </ul>
-    </div>
-  </div>
-);
 
 // Layout component to handle conditional header display
 const Layout = () => {
@@ -60,16 +41,18 @@ const Layout = () => {
   const isAdminPage = location.pathname.startsWith('/admin');
   const isFoodOrDecorativePage = location.pathname === '/food-items' || location.pathname === '/decorative-items';
   const isProductsPage = location.pathname === '/products';
+  const isServicesPage = location.pathname === '/services';
+  const isProhibitedPage = location.pathname === '/prohibited';
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hide Header on mobile for cart, profile, admin, food items, decorative items, and products pages */}
+      {/* Hide Header on mobile for cart, profile, admin, food items, decorative items, products, services, and prohibited items pages */}
       {!isAdminPage && (
-        <div className={(isCartPage || isProfilePage || isFoodOrDecorativePage || isProductsPage) ? 'absolute -top-[9999px] md:relative md:top-0' : ''}>
+        <div className={(isCartPage || isProfilePage || isFoodOrDecorativePage || isProductsPage || isServicesPage || isProhibitedPage) ? 'absolute -top-[9999px] md:relative md:top-0' : ''}>
           <Header />
         </div>
       )}
-      <main className={(isCartPage || isProfilePage) ? 'flex-1' : isAdminPage ? 'flex-1' : 'flex-1 pb-16 md:pb-0'}>
+      <main className={isAdminPage ? 'flex-1' : 'flex-1 pb-20 md:pb-0'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -84,10 +67,10 @@ const Layout = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/home" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/prohibited" element={<ProhibitedItems />} />
           <Route path="/track-order" element={<TrackOrder />} />

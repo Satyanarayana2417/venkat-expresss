@@ -6,14 +6,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState, useEffect } from 'react';
-import { CheckCircle, MapPin, LogIn } from 'lucide-react';
+import { CheckCircle, MapPin, LogIn, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
 import { toast as sonnerToast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { QuoteTimeline } from '@/components/QuoteTimeline';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Services = () => {
   const { toast } = useToast();
@@ -43,13 +44,44 @@ const Services = () => {
     additionalNotes: '',
   });
 
-  // Load quote ID from sessionStorage on mount (for persistence across page reloads)
+  // 🔐 SECURE: Load active quote from user's Firestore profile on auth state change
+  // This ensures each user only sees their own timeline, even after login/logout
   useEffect(() => {
-    const savedQuoteId = sessionStorage.getItem('currentQuoteId');
-    if (savedQuoteId && user) {
-      setSubmittedQuoteId(savedQuoteId);
-    }
-  }, [user]);
+    // Set up Firebase auth state listener
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // User is logged in - fetch their active quote from Firestore
+        try {
+          const userDocRef = doc(db, 'users', currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            const activeQuoteId = userData.activeQuoteId;
+            
+            if (activeQuoteId) {
+              // Set the quote ID to display timeline
+              setSubmittedQuoteId(activeQuoteId);
+              console.log('✅ Loaded active quote from user profile:', activeQuoteId);
+            } else {
+              // No active quote for this user
+              setSubmittedQuoteId(null);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user active quote:', error);
+          setSubmittedQuoteId(null);
+        }
+      } else {
+        // User logged out - clear timeline immediately
+        setSubmittedQuoteId(null);
+        console.log('🔒 User logged out - timeline cleared');
+      }
+    });
+
+    // Cleanup listener on unmount
+    return () => unsubscribe();
+  }, []); // Empty dependency array - runs once and sets up persistent listener
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -124,11 +156,18 @@ const Services = () => {
       // Add document and get the reference with the new ID
       const docRef = await addDoc(quoteRequestsRef, quoteData);
       
-      // Store the quote ID in state to show the timeline
+      // 🔐 SECURE: Store active quote ID in user's Firestore profile
+      // This replaces sessionStorage and ties the timeline to the authenticated user
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, {
+        activeQuoteId: docRef.id,
+        lastQuoteSubmittedAt: serverTimestamp()
+      });
+      
+      // Update local state to show the timeline
       setSubmittedQuoteId(docRef.id);
       
-      // Save to sessionStorage for persistence across page reloads
-      sessionStorage.setItem('currentQuoteId', docRef.id);
+      console.log('✅ Quote created and linked to user profile:', docRef.id);
 
       // Show success message with Sonner toast for better visibility
       sonnerToast.success('Quote Request Sent Successfully!', {
@@ -430,7 +469,15 @@ const Services = () => {
       {/* Hero Section - Dark Professional */}
       <section className="bg-[#101B2D] text-white py-10 md:py-12">
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto relative">
+            {/* Mobile Back Button - Positioned on the left */}
+            <button
+              onClick={() => navigate(-1)}
+              className="md:hidden absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-white" />
+            </button>
+            
             <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Courier Services
             </h1>
@@ -853,9 +900,21 @@ const Services = () => {
               <div id="quote-timeline">
                 <QuoteTimeline 
                   quoteId={submittedQuoteId} 
-                  onClose={() => {
+                  onClose={async () => {
+                    // 🔐 SECURE: Remove activeQuoteId from user's Firestore profile
+                    if (user) {
+                      try {
+                        const userDocRef = doc(db, 'users', user.uid);
+                        await updateDoc(userDocRef, {
+                          activeQuoteId: null
+                        });
+                        console.log('✅ Active quote cleared from user profile');
+                      } catch (error) {
+                        console.error('Error clearing active quote:', error);
+                      }
+                    }
+                    // Clear local state
                     setSubmittedQuoteId(null);
-                    sessionStorage.removeItem('currentQuoteId');
                   }}
                 />
               </div>

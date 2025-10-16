@@ -10,6 +10,8 @@ import { AdminUsers } from './admin/AdminUsers';
 import { AdminUserDetail } from './admin/AdminUserDetail';
 import { AdminDiscounts } from './admin/AdminDiscounts';
 import { AdminSettings } from './admin/AdminSettings';
+import { AdminAboutImages } from './admin/AdminAboutImages';
+import AdminTeam from './admin/AdminTeam';
 
 export const AdminRouter = () => {
   return (
@@ -26,6 +28,8 @@ export const AdminRouter = () => {
       <Route path="users/:userId" element={<AdminUserDetail />} />
       <Route path="discounts" element={<AdminDiscounts />} />
       <Route path="settings" element={<AdminSettings />} />
+      <Route path="content/about-images" element={<AdminAboutImages />} />
+      <Route path="content/team" element={<AdminTeam />} />
     </Routes>
   );
 };

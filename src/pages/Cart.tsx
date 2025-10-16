@@ -1,18 +1,30 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Heart, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { LoginRequiredModal } from '@/components/LoginRequiredModal';
 
 const Cart = () => {
   const { items, updateQuantity, removeFromCart, subtotal, clearCart } = useCart();
   const { addToWishlist } = useWishlist();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleSaveForLater = (item: any) => {
+    // Check if user is logged in for wishlist
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    
     addToWishlist({
       productId: item.productId,
       title: item.title,
@@ -22,6 +34,18 @@ const Cart = () => {
     });
     removeFromCart(item.productId);
     toast.success('Item moved to wishlist');
+  };
+
+  const handleCheckout = () => {
+    // Check if user is logged in for checkout
+    if (!user) {
+      toast.error('Please login to proceed to checkout');
+      setShowLoginModal(true);
+      return;
+    }
+    
+    // TODO: Navigate to checkout page when implemented
+    toast.info('Checkout functionality coming soon!');
   };
 
   const calculateDiscount = (original?: number, current?: number) => {
@@ -180,6 +204,7 @@ const Cart = () => {
             <Button
               size="lg"
               className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-10 h-12 text-base rounded-md"
+              onClick={handleCheckout}
             >
               Place order
             </Button>
@@ -304,7 +329,7 @@ const Cart = () => {
                 <span className="text-primary">₹{subtotal.toFixed(2)}</span>
               </div>
 
-              <Button className="w-full" size="lg">
+              <Button className="w-full" size="lg" onClick={handleCheckout}>
                 Proceed to Checkout
               </Button>
 
@@ -317,6 +342,14 @@ const Cart = () => {
           </div>
         </div>
       </div>
+
+      {/* Login Required Modal */}
+      <LoginRequiredModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        message="Please log in to continue. You can save items to your wishlist and proceed to checkout once logged in."
+        returnPath="/cart"
+      />
     </>
   );
 };

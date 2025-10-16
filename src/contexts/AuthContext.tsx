@@ -18,6 +18,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  registerLogoutCallback: (callback: () => void) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,6 +34,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [logoutCallbacks, setLogoutCallbacks] = useState<Array<() => void>>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -132,6 +134,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
+      // Execute all registered logout callbacks (clear UI state)
+      logoutCallbacks.forEach(callback => {
+        try {
+          callback();
+        } catch (error) {
+          console.error('Error executing logout callback:', error);
+        }
+      });
+      
       await firebaseSignOut(auth);
       toast.success('Signed out successfully');
     } catch (error: any) {
@@ -150,8 +161,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const registerLogoutCallback = (callback: () => void) => {
+    setLogoutCallbacks(prev => [...prev, callback]);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, resetPassword, registerLogoutCallback }}>
       {children}
     </AuthContext.Provider>
   );

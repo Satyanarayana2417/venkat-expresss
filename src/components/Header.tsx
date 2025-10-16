@@ -437,6 +437,12 @@ export const Header = () => {
                 >
                   Decorative Items
                 </Link>
+                <Link
+                  to="/prohibited"
+                  className="px-3 py-2 text-sm font-medium whitespace-nowrap border border-gray-300 rounded-full bg-white text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Prohibited Items
+                </Link>
               </nav>
             </div>
           </div>

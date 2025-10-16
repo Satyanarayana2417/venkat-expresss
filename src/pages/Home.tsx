@@ -24,7 +24,10 @@ const Home = () => {
             </p>
           </div>
           <Link to="/services">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-5 text-sm whitespace-nowrap">
+            <Button 
+              variant="outline" 
+              className="bg-transparent border-2 border-orange-500 text-orange-600 hover:bg-transparent hover:border-orange-600 hover:text-orange-700 font-semibold px-6 py-5 text-sm whitespace-nowrap transition-all duration-300"
+            >
               Make a Request →
             </Button>
           </Link>
