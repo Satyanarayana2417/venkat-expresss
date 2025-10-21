@@ -13,7 +13,7 @@ const Login = () => {
   const { signIn } = useAuth();
   
   // Get return path from location state
-  const from = (location.state as any)?.from || '/home';
+  const from = (location.state as any)?.from || '/';
   
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);

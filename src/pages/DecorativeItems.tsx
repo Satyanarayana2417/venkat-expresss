@@ -11,6 +11,7 @@ import { Search, SlidersHorizontal, Loader2, Heart, Grid, List, X, ArrowLeft, Ch
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const DecorativeItems = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const DecorativeItems = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
@@ -80,7 +82,7 @@ const DecorativeItems = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="font-heading text-lg font-bold">
-            Handcrafted Home Decor
+            {t('decorativeItems.title')}
           </h1>
         </div>
       </div>
@@ -93,10 +95,10 @@ const DecorativeItems = () => {
         <div className="hidden md:flex items-center gap-4">
           <div>
             <h1 className="font-heading text-lg lg:text-xl font-bold mb-0.5 lg:mb-1">
-              Handcrafted Home Decor
+              {t('decorativeItems.title')}
             </h1>
             <p className="text-xs text-muted-foreground">
-              Beautiful decorative items to enhance your living space
+              {t('decorativeItems.subtitle')}
             </p>
           </div>
 
@@ -104,7 +106,7 @@ const DecorativeItems = () => {
           <div className="relative w-full max-w-md">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search decorative items..."
+              placeholder={t('decorativeItems.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-9 text-sm"
@@ -121,7 +123,7 @@ const DecorativeItems = () => {
             className="flex items-center gap-2 shrink-0"
           >
             <SlidersHorizontal className="h-4 w-4" />
-            <span>Filters</span>
+            <span>{t('decorativeItems.filters')}</span>
           </Button>
 
           {/* View Mode Toggle - Desktop */}
@@ -152,7 +154,7 @@ const DecorativeItems = () => {
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search decorative items..."
+              placeholder={t('decorativeItems.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-9 text-sm"
@@ -166,14 +168,14 @@ const DecorativeItems = () => {
             className="flex items-center gap-2"
           >
             <SlidersHorizontal className="h-4 w-4" />
-            <span className="hidden sm:inline">Filters</span>
+            <span className="hidden sm:inline">{t('decorativeItems.filters')}</span>
           </Button>
         </div>
 
         {/* Second Row: Results Count and View Mode Toggle */}
         <div className="flex gap-2 justify-between items-center">
           <div className="text-sm text-muted-foreground">
-            Showing {filteredProducts.length} item{filteredProducts.length !== 1 ? 's' : ''}
+            {t('decorativeItems.showing')} {filteredProducts.length} {filteredProducts.length !== 1 ? t('decorativeItems.items') : t('decorativeItems.item')}
           </div>
           <div className="flex gap-2">
             <Button
@@ -220,7 +222,7 @@ const DecorativeItems = () => {
               <div className="p-6 space-y-6">
                 {/* Sidebar Header */}
                 <div className="flex items-center justify-between border-b pb-4">
-                  <h2 className="text-lg font-semibold">Filters</h2>
+                  <h2 className="text-lg font-semibold">{t('decorativeItems.filters')}</h2>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -236,7 +238,7 @@ const DecorativeItems = () => {
                     onClick={() => toggleSection('sortBy')}
                     className="w-full flex items-center justify-between py-2 text-sm font-semibold uppercase text-gray-700 hover:text-gray-900"
                   >
-                    <span>Sort By</span>
+                    <span>{t('decorativeItems.sortBy')}</span>
                     <ChevronDown className={cn(
                       "h-4 w-4 transition-transform",
                       openSections.sortBy && "rotate-180"
@@ -253,7 +255,7 @@ const DecorativeItems = () => {
                             : "hover:bg-gray-100"
                         )}
                       >
-                        Featured
+                        {t('decorativeItems.featured')}
                       </button>
                       <button
                         onClick={() => setSortBy('price-low')}
@@ -264,7 +266,7 @@ const DecorativeItems = () => {
                             : "hover:bg-gray-100"
                         )}
                       >
-                        Price: Low to High
+                        {t('decorativeItems.priceLowToHigh')}
                       </button>
                       <button
                         onClick={() => setSortBy('price-high')}
@@ -275,7 +277,7 @@ const DecorativeItems = () => {
                             : "hover:bg-gray-100"
                         )}
                       >
-                        Price: High to Low
+                        {t('decorativeItems.priceHighToLow')}
                       </button>
                     </div>
                   )}
@@ -287,7 +289,7 @@ const DecorativeItems = () => {
                     onClick={() => toggleSection('price')}
                     className="w-full flex items-center justify-between py-2 text-sm font-semibold uppercase text-gray-700 hover:text-gray-900"
                   >
-                    <span>Price Range</span>
+                    <span>{t('decorativeItems.priceRange')}</span>
                     <ChevronDown className={cn(
                       "h-4 w-4 transition-transform",
                       openSections.price && "rotate-180"
@@ -326,7 +328,7 @@ const DecorativeItems = () => {
 
       {/* Results Count - Desktop Only */}
       <div className="hidden md:block mb-4 text-sm text-muted-foreground">
-        Showing {filteredProducts.length} decorative item{filteredProducts.length !== 1 ? 's' : ''}
+        {t('decorativeItems.showing')} {filteredProducts.length} {filteredProducts.length !== 1 ? t('decorativeItems.items') : t('decorativeItems.item')}
       </div>
 
       {/* Products Grid/List */}
@@ -336,7 +338,7 @@ const DecorativeItems = () => {
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No decorative items found matching your criteria.</p>
+          <p className="text-muted-foreground">{t('decorativeItems.noProducts')}</p>
         </div>
       ) : (
         <div
@@ -426,7 +428,7 @@ const DecorativeItems = () => {
                   )}
                   disabled={product.stock === 0}
                 >
-                  <span className="mr-1">+</span> {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                  <span className="mr-1">+</span> {product.stock === 0 ? t('products.outOfStock') : t('decorativeItems.addToCart')}
                 </Button>
               </div>
             </motion.div>

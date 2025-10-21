@@ -11,8 +11,10 @@ import { useRef, useState, useEffect } from 'react';
 import { useCountUp } from '@/hooks/useCountUp';
 import { db } from '@/lib/firebase';
 import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+  const { t } = useTranslation();
   const heroRef = useRef(null);
   const isHeroInView = useInView(heroRef, { once: true, amount: 0.3 });
 
@@ -47,21 +49,21 @@ const About = () => {
   const stats = [
     { 
       icon: Award, 
-      label: 'Years of Experience', 
+      label: t('about.stats.yearsExperience'), 
       value: 10,
       suffix: '+',
       color: 'from-orange-500 to-red-500'
     },
     { 
       icon: Globe, 
-      label: 'Countries Served', 
+      label: t('about.stats.countriesServed'), 
       value: 50,
       suffix: '+',
       color: 'from-blue-500 to-cyan-500'
     },
     { 
       icon: Users, 
-      label: 'Happy Customers', 
+      label: t('about.stats.happyCustomers'), 
       value: 15000,
       suffix: '+',
       format: (val: number) => `${(val / 1000).toFixed(0)}K`,
@@ -69,7 +71,7 @@ const About = () => {
     },
     { 
       icon: Package, 
-      label: 'Safe Delivery', 
+      label: t('about.stats.safeDelivery'), 
       value: 99,
       suffix: '%',
       color: 'from-green-500 to-emerald-500'
@@ -80,29 +82,29 @@ const About = () => {
   const values = [
     {
       icon: Leaf,
-      title: 'Authenticity',
-      description: 'Sourcing only the most genuine products from trusted suppliers across India.',
+      title: t('about.values.authenticity.title'),
+      description: t('about.values.authenticity.description'),
       gradient: 'from-green-50 to-emerald-50',
       iconColor: 'text-green-600'
     },
     {
       icon: Shield,
-      title: 'Trust & Reliability',
-      description: 'Ensuring every package is handled with care and delivered securely to your doorstep.',
+      title: t('about.values.trust.title'),
+      description: t('about.values.trust.description'),
       gradient: 'from-blue-50 to-cyan-50',
       iconColor: 'text-blue-600'
     },
     {
       icon: Globe,
-      title: 'Global Reach',
-      description: 'Connecting the Indian diaspora in over 50 countries to the tastes and culture of home.',
+      title: t('about.values.globalReach.title'),
+      description: t('about.values.globalReach.description'),
       gradient: 'from-purple-50 to-pink-50',
       iconColor: 'text-purple-600'
     },
     {
       icon: Sprout,
-      title: 'Community Support',
-      description: 'Empowering local artisans and farmers with a global platform for their authentic craft.',
+      title: t('about.values.community.title'),
+      description: t('about.values.community.description'),
       gradient: 'from-orange-50 to-amber-50',
       iconColor: 'text-orange-600'
     },
@@ -112,32 +114,32 @@ const About = () => {
   const milestones = [
     {
       year: '2014',
-      title: 'Founded in Hyderabad',
-      description: 'Venkat Express was established with a vision to bridge the gap between India and the world, starting with a small team passionate about cultural connections.',
+      title: t('about.journey.milestones.2014.title'),
+      description: t('about.journey.milestones.2014.description'),
       icon: Star
     },
     {
-      year: '2016',
-      title: 'International Expansion',
-      description: 'Expanded services to 20+ countries across North America, Europe, and Asia, establishing key partnerships and logistics networks.',
+      year: '2017',
+      title: t('about.journey.milestones.2017.title'),
+      description: t('about.journey.milestones.2017.description'),
       icon: Globe
     },
     {
-      year: '2018',
-      title: 'Specialized Excellence',
-      description: 'Became recognized experts in shipping food items and decorative products internationally, mastering complex regulations and preservation techniques.',
+      year: '2019',
+      title: t('about.journey.milestones.2019.title'),
+      description: t('about.journey.milestones.2019.description'),
       icon: Box
     },
     {
-      year: '2020',
-      title: 'Digital Transformation',
-      description: 'Launched our comprehensive online platform for seamless ordering, real-time tracking, and enhanced customer experience.',
+      year: '2022',
+      title: t('about.journey.milestones.2022.title'),
+      description: t('about.journey.milestones.2022.description'),
       icon: TrendingUp
     },
     {
       year: '2024',
-      title: 'Industry Leader',
-      description: 'Proudly serving 50+ countries with 15,000+ satisfied customers and maintaining a 99% safe delivery record.',
+      title: t('about.journey.milestones.2024.title'),
+      description: t('about.journey.milestones.2024.description'),
       icon: Award
     },
   ];
@@ -146,33 +148,33 @@ const About = () => {
   const advantages = [
     {
       icon: Truck,
-      title: 'Express Worldwide Shipping',
-      description: 'Fast and reliable delivery to 50+ countries with full tracking and insurance.'
+      title: t('about.advantages.expressShipping.title'),
+      description: t('about.advantages.expressShipping.description')
     },
     {
       icon: Shield,
-      title: '99% Safe Delivery Rate',
-      description: 'Industry-leading safety standards with specialized packaging and handling.'
+      title: t('about.advantages.secureHandling.title'),
+      description: t('about.advantages.secureHandling.description')
     },
     {
       icon: CheckCircle,
-      title: 'Authentic Products',
-      description: 'Sourced directly from trusted suppliers and verified for quality and authenticity.'
+      title: t('about.advantages.authenticProducts.title'),
+      description: t('about.advantages.authenticProducts.description')
     },
     {
       icon: HeadphonesIcon,
-      title: '24/7 Customer Support',
-      description: 'Dedicated multilingual support team ready to assist you anytime, anywhere.'
+      title: t('about.advantages.support.title'),
+      description: t('about.advantages.support.description')
     },
     {
       icon: BadgeCheck,
-      title: 'Customs Expertise',
-      description: 'Seamless navigation of international regulations and documentation.'
+      title: t('about.advantages.customs.title'),
+      description: t('about.advantages.customs.description')
     },
     {
       icon: Heart,
-      title: 'Customer-Centric Approach',
-      description: 'Your satisfaction is our priority. We go above and beyond for every shipment.'
+      title: t('about.advantages.competitive.title'),
+      description: t('about.advantages.competitive.description')
     },
   ];
 
@@ -236,10 +238,10 @@ const About = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight">
-              <span className="bg-gradient-to-r from-orange-500 via-white to-green-500 bg-clip-text text-transparent">From India</span><span className="text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>, With Love</span>
+              <span className="bg-gradient-to-r from-orange-500 via-white to-green-500 bg-clip-text text-transparent">{t('about.hero.title1')}</span><span className="text-white" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>{t('about.hero.title2')}</span>
             </h1>
             <p className="text-lg md:text-xl text-white max-w-2xl mx-auto mb-8 font-semibold" style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}>
-              Bridging continents and cultures, delivering authentic Indian treasures to your doorstep worldwide.
+              {t('about.hero.subtitle')}
             </p>
           </motion.div>
         </div>
@@ -256,10 +258,10 @@ const About = () => {
             className="text-center mb-12"
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Our Story
+              {t('about.ourStory.title')}
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              A decade-long journey of connecting cultures and delivering happiness across borders.
+              {t('about.ourStory.subtitle')}
             </p>
           </motion.div>
 
@@ -273,13 +275,13 @@ const About = () => {
                 transition={{ duration: 0.6 }}
               >
                 <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                  Founded in 2014
+                  {t('about.ourStory.founded.title')}
                 </h3>
                 <p className="text-base text-gray-700 leading-relaxed mb-3">
-                  Venkat Express was born from a simple yet powerful observation: people living abroad deeply miss the authentic products and flavors of India. Whether it's a special spice blend, traditional decorative items, or handcrafted artifacts, these connections to home are irreplaceable.
+                  {t('about.ourStory.founded.para1')}
                 </p>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  What started as a small operation in Hyderabad has grown into a trusted international courier service, specializing in food items and decorative products that carry the essence of Indian culture.
+                  {t('about.ourStory.founded.para2')}
                 </p>
               </motion.div>
               <motion.div
@@ -320,13 +322,13 @@ const About = () => {
                 className="lg:order-last"
               >
                 <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                  Mastering the Art of International Shipping
+                  {t('about.ourStory.growth.title')}
                 </h3>
                 <p className="text-base text-gray-700 leading-relaxed mb-3">
-                  Over the past 10+ years, we've perfected the art of international shipping, navigating complex customs regulations and ensuring products arrive in perfect condition. Our expertise lies in understanding the unique challenges of shipping food and decorative items internationally.
+                  {t('about.ourStory.growth.para1')}
                 </p>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  From proper packaging to customs documentation, we handle every detail so you can enjoy authentic Indian products anywhere in the world.
+                  {t('about.ourStory.growth.para2')}
                 </p>
               </motion.div>
             </div>
@@ -340,13 +342,13 @@ const About = () => {
                 transition={{ duration: 0.6 }}
               >
                 <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-900 mb-4">
-                  Delivering More Than Packages
+                  {t('about.ourStory.today.title')}
                 </h3>
                 <p className="text-base text-gray-700 leading-relaxed mb-3">
-                  Today, we're proud to serve customers in over 50 countries, delivering not just products, but pieces of home, cultural heritage, and cherished memories. Every package we send carries a story, a tradition, and a connection to India.
+                  {t('about.ourStory.today.para1')}
                 </p>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  With 15,000+ satisfied customers and a 99% safe delivery record, we continue to be the bridge that connects the Indian diaspora with the flavors and crafts they love.
+                  {t('about.ourStory.today.para2')}
                 </p>
               </motion.div>
               <motion.div
@@ -378,10 +380,10 @@ const About = () => {
             className="text-center mb-12"
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Our Core Values
+              {t('about.values.title')}
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              The principles that guide every decision we make and every package we deliver.
+              {t('about.values.subtitle')}
             </p>
           </motion.div>
 
@@ -464,10 +466,10 @@ const About = () => {
             className="text-center mb-12"
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Our Journey
+              {t('about.journey.title')}
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              A decade of growth, innovation, and unwavering commitment to excellence.
+              {t('about.journey.subtitle')}
             </p>
           </motion.div>
 
@@ -549,10 +551,10 @@ const About = () => {
               className="text-center"
             >
               <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
-                Connecting the World to India
+                {t('about.hero.worldToIndia')}
               </h2>
               <p className="text-base md:text-lg text-white max-w-2xl mx-auto" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.3)' }}>
-                Serving customers in over 50 countries across four continents with pride and precision.
+                {t('about.hero.worldToIndiaSubtitle')}
               </p>
             </motion.div>
           </div>
@@ -570,10 +572,10 @@ const About = () => {
             className="text-center mb-12"
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Why Choose Venkat Express?
+              {t('about.advantages.title')}
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              Experience the difference that expertise, care, and dedication make in international shipping.
+              {t('about.advantages.subtitle')}
             </p>
           </motion.div>
 
@@ -620,10 +622,10 @@ const About = () => {
             className="text-center mb-12"
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Meet Our Team
+              {t('about.team.title')}
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              The passionate professionals behind every successful delivery and satisfied customer.
+              {t('about.team.subtitle')}
             </p>
           </motion.div>
 
@@ -657,7 +659,7 @@ const About = () => {
                       className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
                     >
                       <Linkedin className="h-4 w-4" />
-                      <span className="text-xs font-medium">Connect</span>
+                      <span className="text-xs font-medium">{t('about.team.connect')}</span>
                     </a>
                   </CardContent>
                 </Card>
@@ -687,23 +689,23 @@ const About = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-              Ready to Experience<br />
+              {t('about.cta.title1')}<br />
               <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                Authentic India?
+                {t('about.cta.title2')}
               </span>
             </h2>
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-              Join thousands of satisfied customers worldwide who trust Venkat Express for authentic Indian products and reliable international shipping.
+              {t('about.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/products">
                 <Button size="default" className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold px-8 py-5 text-base">
-                  Shop Products
+                  {t('about.cta.shopBtn')}
                 </Button>
               </Link>
               <Link to="/services">
                 <Button size="default" className="bg-white text-black hover:bg-yellow-400 hover:text-black font-semibold px-8 py-5 text-base border-2 border-white">
-                  Get a Quote
+                  {t('about.cta.quoteBtn')}
                 </Button>
               </Link>
             </div>

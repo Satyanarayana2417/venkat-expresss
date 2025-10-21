@@ -75,10 +75,10 @@ const ProductDetail = () => {
       <Button
         variant="ghost"
         className="mb-6"
-        onClick={() => navigate('/products')}
+        onClick={() => navigate(-1)}
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Products
+        Back
       </Button>
 
       {/* Product Details */}

@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface ProductCarouselProps {
   title: string;
@@ -15,6 +16,7 @@ interface ProductCarouselProps {
 }
 
 const ProductCarousel = ({ title, category, position = 'left' }: ProductCarouselProps) => {
+  const { t } = useTranslation();
   const { products } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -67,7 +69,7 @@ const ProductCarousel = ({ title, category, position = 'left' }: ProductCarousel
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl md:text-2xl font-semibold">{title}</h2>
         <Link to={getViewAllLink()} className="text-sm font-semibold hover:underline flex items-center gap-1">
-          View all
+          {t('featuredProducts.viewAll')}
           <ChevronRight className="h-4 w-4" />
         </Link>
       </div>
@@ -146,14 +148,14 @@ const ProductCarousel = ({ title, category, position = 'left' }: ProductCarousel
                     size="sm"
                     className="w-full text-xs font-semibold rounded-none hover:bg-gray-100"
                   >
-                    <span className="mr-1">+</span> Add
+                    <span className="mr-1">+</span> {t('featuredProducts.add')}
                   </Button>
                 </div>
               </motion.div>
             ))
           ) : (
             <div className="w-full py-8 text-center text-muted-foreground">
-              No products available in this category
+              {t('featuredProducts.noProducts')}
             </div>
           )}
         </div>
@@ -170,6 +172,7 @@ interface PromoBannerProps {
 }
 
 const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps) => {
+  const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -191,7 +194,7 @@ const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps)
       {/* Loading placeholder */}
       {!imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
-          <span className="text-gray-400">Loading...</span>
+          <span className="text-gray-400">{t('featuredProducts.loading')}</span>
         </div>
       )}
       
@@ -221,33 +224,35 @@ const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps)
 };
 
 export const FeaturedProducts = () => {
+  const { t } = useTranslation();
+  
   return (
     <section className="container mx-auto px-4 lg:px-6 pt-2 pb-6 space-y-12">
       {/* First Row: Banner Left, Carousel Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-6">
           <PromoBanner
-            title="Elevate Your Cooking"
+            title={t('featuredProducts.elevateYourCooking')}
             image="https://i.postimg.cc/DmTrD8Q6/image.png"
-            buttonText="Shop Now"
+            buttonText={t('featuredProducts.shopNow')}
             buttonLink="/food-items"
           />
         </div>
         <div className="lg:col-span-6">
-          <ProductCarousel title="Authentic Spices & Sauces" category="Food" position="right" />
+          <ProductCarousel title={t('featuredProducts.authenticSpices')} category="Food" position="right" />
         </div>
       </div>
 
       {/* Second Row: Carousel Left, Banner Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-6 order-2 lg:order-1">
-          <ProductCarousel title="Handcrafted Home Decor" category="Decorative" position="left" />
+          <ProductCarousel title={t('featuredProducts.handcraftedDecor')} category="Decorative" position="left" />
         </div>
         <div className="lg:col-span-6 order-1 lg:order-2">
           <PromoBanner
-            title="Beautify Your Living Space"
+            title={t('featuredProducts.beautifySpace')}
             image="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80"
-            buttonText="Shop Now"
+            buttonText={t('featuredProducts.shopNow')}
             buttonLink="/decorative-items"
           />
         </div>

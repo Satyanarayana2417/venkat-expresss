@@ -3,11 +3,13 @@ import { Home, Grid3x3, ShoppingCart, User, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export const BottomNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
   const { totalItems, subtotal } = useCart();
+  const { t } = useTranslation();
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -18,28 +20,28 @@ export const BottomNavbar = () => {
   const navItems = [
     {
       icon: Home,
-      label: 'Home',
+      label: t('bottomNav.home'),
       path: '/',
     },
     {
       icon: Grid3x3,
-      label: 'Categories',
+      label: t('bottomNav.categories'),
       path: '/products',
     },
     {
       icon: ShoppingCart,
-      label: 'Cart',
+      label: t('bottomNav.cart'),
       path: '/cart',
       isCart: true,
     },
     {
       icon: User,
-      label: 'Sign In',
+      label: t('bottomNav.signIn'),
       path: user ? '/dashboard' : '/auth',
     },
     {
       icon: Menu,
-      label: 'Menu',
+      label: t('bottomNav.menu'),
       path: '/menu',
       isMenu: true,
     },
@@ -95,7 +97,7 @@ export const BottomNavbar = () => {
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] font-semibold">₹{subtotal.toFixed(2)}</span>
+                  <span className="text-[10px] font-semibold">{t('common.currency')}{subtotal.toFixed(2)}</span>
                 </>
               ) : (
                 <>

@@ -8,42 +8,43 @@ import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 // Category data for the first carousel
 const categories = [
   {
     id: 'spices',
-    name: 'Spices',
+    nameKey: 'productShowcase.categories.spices',
     image: 'https://images.unsplash.com/photo-1596040033229-a0b3b684e2e8?w=400&q=80',
     link: '/products?category=Food&subcategory=spices'
   },
   {
     id: 'snacks',
-    name: 'Snacks & Sweets',
+    nameKey: 'productShowcase.categories.snacks',
     image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&q=80',
     link: '/products?category=Food&subcategory=snacks'
   },
   {
     id: 'home-decor',
-    name: 'Home Decor',
+    nameKey: 'productShowcase.categories.homeDecor',
     image: 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=400&q=80',
     link: '/products?category=Decorative'
   },
   {
     id: 'kitchenware',
-    name: 'Kitchenware',
+    nameKey: 'productShowcase.categories.kitchenware',
     image: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400&q=80',
     link: '/products?category=Decorative&subcategory=kitchen'
   },
   {
     id: 'festive',
-    name: 'Festive Items',
+    nameKey: 'productShowcase.categories.festive',
     image: 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=400&q=80',
     link: '/products?category=Decorative&subcategory=festive'
   },
   {
     id: 'courier',
-    name: 'Courier Service',
+    nameKey: 'productShowcase.categories.courier',
     image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=400&q=80',
     link: '/services'
   }
@@ -55,6 +56,7 @@ interface CategoryCarouselProps {
 }
 
 const CategoryCarousel = ({ title, viewAllLink }: CategoryCarouselProps) => {
+  const { t } = useTranslation();
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -76,7 +78,7 @@ const CategoryCarousel = ({ title, viewAllLink }: CategoryCarouselProps) => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
         <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1">
-          View all →
+          {t('productShowcase.viewAll')} →
         </Link>
       </div>
 
@@ -120,13 +122,13 @@ const CategoryCarousel = ({ title, viewAllLink }: CategoryCarouselProps) => {
                 <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden mb-3 shadow-md group-hover/item:shadow-lg transition-shadow">
                   <img
                     src={category.image}
-                    alt={category.name}
+                    alt={t(category.nameKey)}
                     className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-300"
                     loading="lazy"
                   />
                 </div>
                 <p className="text-sm font-medium text-center text-gray-700 group-hover/item:text-gray-900">
-                  {category.name}
+                  {t(category.nameKey)}
                 </p>
               </motion.div>
             </Link>
@@ -145,6 +147,7 @@ interface ProductCarouselShowcaseProps {
 }
 
 const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: ProductCarouselShowcaseProps) => {
+  const { t } = useTranslation();
   const { products } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -216,7 +219,7 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
         <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1">
-          View all →
+          {t('productShowcase.viewAll')} →
         </Link>
       </div>
 
@@ -318,7 +321,7 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
                       size="sm"
                       className="w-full text-xs font-semibold rounded-none hover:bg-gray-100"
                     >
-                      <span className="mr-1">+</span> Add
+                      <span className="mr-1">+</span> {t('productShowcase.add')}
                     </Button>
                   </div>
                 </motion.div>
@@ -326,7 +329,7 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
             })
           ) : (
             <div className="w-full py-8 text-center text-muted-foreground">
-              No products available in this category
+              {t('productShowcase.noProducts')}
             </div>
           )}
         </div>
@@ -337,17 +340,19 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
 
 // Main Component
 export const ProductShowcase = () => {
+  const { t } = useTranslation();
+  
   return (
     <section className="container mx-auto px-4 lg:px-6 py-12 space-y-12">
       {/* Carousel 1: Browse by Category */}
       <CategoryCarousel 
-        title="Get it all right here" 
+        title={t('productShowcase.getItAllHere')}
         viewAllLink="/products"
       />
 
       {/* Carousel 2: Save on Popular Food Items */}
       <ProductCarouselShowcase
-        title="Save on Popular Food Items"
+        title={t('productShowcase.saveOnFood')}
         category="Food"
         viewAllLink="/products?category=Food"
         carouselId="food-carousel"
@@ -355,7 +360,7 @@ export const ProductShowcase = () => {
 
       {/* Carousel 3: Flash Deals on Decor */}
       <ProductCarouselShowcase
-        title="Flash Deals on Decor"
+        title={t('productShowcase.flashDealsDecor')}
         category="Decorative"
         viewAllLink="/products?category=Decorative"
         carouselId="decor-carousel"

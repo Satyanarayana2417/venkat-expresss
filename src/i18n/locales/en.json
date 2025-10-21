@@ -1,0 +1,724 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "submit": "Submit",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "currency": "₹"
+  },
+  "header": {
+    "searchPlaceholder": "Search for Indian food, spices, decorative items..",
+    "trackOrder": "Track Order",
+    "wishlist": "Wishlist",
+    "account": "Account",
+    "signIn": "Sign In",
+    "cart": "Cart",
+    "shopProducts": "Shop Products",
+    "courierServices": "Courier Services",
+    "foodItems": "Food Items",
+    "decorativeItems": "Decorative Items",
+    "aboutUs": "About Us",
+    "prohibitedItems": "Prohibited Items"
+  },
+  "footer": {
+    "tagline": "Premium global shopping and courier services from India to the world.",
+    "quickLinks": "Quick Links",
+    "products": "Products",
+    "services": "Services",
+    "branch": "Branch",
+    "aboutUs": "About Us",
+    "servicesTitle": "Services",
+    "purchaseOnBehalf": "Purchase on Behalf",
+    "internationalShipping": "International Shipping",
+    "packageTracking": "Package Tracking",
+    "customsSupport": "Customs Support",
+    "contactUs": "Contact Us",
+    "location": "Hyderabad, India",
+    "email": "info@venkatexpress.com",
+    "phone": "+91 XXXX XXXXXX",
+    "copyright": "Venkat Express. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "categories": "Categories",
+    "cart": "Cart",
+    "signIn": "Sign In",
+    "menu": "Menu"
+  },
+  "home": {
+    "cantFind": "Can't find it? Let us source it for you.",
+    "sourcingDescription": "Looking for something specific from India? Our sourcing experts can help you find authentic products and deliver them worldwide.",
+    "makeRequest": "Make a Request →",
+    "howItWorks": "How It Works",
+    "howItWorksDescription": "Four simple steps to get authentic Indian products delivered anywhere in the world",
+    "step1Title": "You Request or Shop",
+    "step1Description": "Browse our products or tell us what specific items you need from India. We source everything with care.",
+    "step2Title": "We Pack with Care",
+    "step2Description": "Our expert team carefully packs your items using premium materials to ensure they arrive in perfect condition.",
+    "step3Title": "Express Shipping",
+    "step3Description": "We use trusted international courier services to ship your package with full tracking and insurance.",
+    "step4Title": "Delivered Worldwide",
+    "step4Description": "Receive your authentic Indian items anywhere in the world, typically within 7-14 business days.",
+    "learnMore": "Learn More About Our Services"
+  },
+  "hero": {
+    "shopFromIndia": "Shop from India, we deliver to your doorstep",
+    "learnMore": "Learn more",
+    "shopTopCategories": "Shop Top Categories: Food & Decor",
+    "shopAll": "Shop All",
+    "newMangoPickle": "New: Authentic Mango Pickle",
+    "shopNow": "Shop now",
+    "upToOff": "Up to 30% Off",
+    "hotNewArrivals": "Hot New Arrivals in Decor",
+    "newArtisanCollection": "New Artisan Collection",
+    "indianSweets": "Authentic Indian Sweets, Delivered Fresh",
+    "cantFindSource": "Can't find it? Let us source it for you.",
+    "makeRequest": "Make a Request"
+  },
+  "dashboard": {
+    "profile": "Profile",
+    "explorePlusSilver": "Explore ✨Plus Silver",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "coupons": "Coupons",
+    "helpCenter": "Help Center",
+    "loadingDashboard": "Loading dashboard...",
+    "accountInfo": "Account Information",
+    "orderHistory": "Order History",
+    "savedAddresses": "Saved Addresses",
+    "logout": "Logout",
+    "accountSettings": "Account Settings",
+    "venkatPlus": "Venkat Plus",
+    "editProfile": "Edit Profile",
+    "savedCards": "Saved Credit / Debit & Gift Cards",
+    "selectLanguage": "Select Language",
+    "notificationSettings": "Notification Settings",
+    "privacyCenter": "Privacy Center",
+    "myActivity": "My Activity",
+    "reviews": "Reviews",
+    "questionsAndAnswers": "Questions & Answers",
+    "signOut": "Sign Out"
+  },
+  "featuredProducts": {
+    "viewAll": "View all",
+    "add": "Add",
+    "noProducts": "No products available in this category",
+    "loading": "Loading...",
+    "elevateYourCooking": "Elevate Your Cooking",
+    "shopNow": "Shop Now",
+    "authenticSpices": "Authentic Spices & Sauces",
+    "handcraftedDecor": "Handcrafted Home Decor",
+    "beautifySpace": "Beautify Your Living Space"
+  },
+  "productShowcase": {
+    "getItAllHere": "Get it all right here",
+    "saveOnFood": "Save on Popular Food Items",
+    "flashDealsDecor": "Flash Deals on Decor",
+    "viewAll": "View all",
+    "add": "Add",
+    "noProducts": "No products available in this category",
+    "categories": {
+      "spices": "Spices",
+      "snacks": "Snacks & Sweets",
+      "homeDecor": "Home Decor",
+      "kitchenware": "Kitchenware",
+      "festive": "Festive Items",
+      "courier": "Courier Service"
+    }
+  },
+  "accountLanguage": {
+    "selectLanguage": "Select Language",
+    "choosePreferred": "Choose your preferred language",
+    "english": "English",
+    "hindi": "Hindi",
+    "telugu": "Telugu",
+    "tamil": "Tamil",
+    "kannada": "Kannada",
+    "malayalam": "Malayalam",
+    "noteTitle": "Note:",
+    "noteDescription": "Language selection is currently for display purposes. Full translation support will be available soon."
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Discover authentic Indian products curated for global delivery",
+    "searchPlaceholder": "Search products...",
+    "filters": "Filters",
+    "showing": "Showing",
+    "item": "item",
+    "items": "items",
+    "allProducts": "All Products",
+    "foodItems": "Food Items",
+    "decorativeItems": "Decorative Items",
+    "sortBy": "Sort By",
+    "priceRange": "Price Range",
+    "category": "Category",
+    "categories": "Categories",
+    "all": "All",
+    "food": "Food",
+    "decorative": "Decorative",
+    "featured": "Featured",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "addToCart": "Add to Cart",
+    "addToWishlist": "Add to Wishlist",
+    "viewDetails": "View Details",
+    "noProducts": "No products found matching your criteria.",
+    "loadMore": "Load More",
+    "applyFilters": "Apply Filters",
+    "onlyLeft": "Only {{count}} left!",
+    "outOfStock": "Out of Stock",
+    "product": "product",
+    "products": "products"
+  },
+  "cart": {
+    "shoppingCart": "Shopping Cart",
+    "emptyCart": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "proceedToCheckout": "Proceed to Checkout",
+    "removeItem": "Remove Item",
+    "updateQuantity": "Update Quantity",
+    "cartItems": "Cart Items"
+  },
+  "payment": {
+    "paymentDetails": "Payment Details",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "cvv": "CVV",
+    "nameOnCard": "Name on Card",
+    "billingAddress": "Billing Address",
+    "placeOrder": "Place Order",
+    "processingPayment": "Processing Payment..."
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create Account",
+    "signInWithGoogle": "Sign In with Google",
+    "signUpWithGoogle": "Sign Up with Google"
+  },
+  "orders": {
+    "myOrders": "My Orders",
+    "orderHistory": "Order History",
+    "orderDetails": "Order Details",
+    "orderNumber": "Order Number",
+    "orderDate": "Order Date",
+    "orderStatus": "Order Status",
+    "trackOrder": "Track Order",
+    "reorder": "Reorder",
+    "cancelOrder": "Cancel Order",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "account": {
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "orders": "Orders",
+    "addresses": "Addresses",
+    "savedCards": "Saved Cards",
+    "coupons": "Coupons",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "reviews": "Reviews",
+    "questions": "Questions",
+    "requests": "Requests",
+    "plus": "Plus",
+    "language": "Language",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "deleteAccount": "Delete Account"
+  },
+  "services": {
+    "pageTitle": "Courier Services",
+    "pageSubtitleMobile": "Your personal courier and shopper, from India to the world.",
+    "pageSubtitleDesktop": "Professional courier services from India to the world. Whether you want to send personal items or need us to shop on your behalf, we've got you covered.",
+    "ourServices": "Our Services",
+    "chooseService": "Choose the service that best fits your needs",
+    
+    "youGiveWeShip": "You Give, We Ship",
+    "youGiveWeShipDesc": "Already have products? Bring them to our Hyderabad branch or schedule a pickup.",
+    "weBuyForYou": "We Buy for You",
+    "weBuyForYouDesc": "Select products from our catalog or request specific items from India.",
+    "expressShipping": "Express Shipping",
+    "expressShippingDesc": "Need it fast? Our premium express service gets your items delivered quickly.",
+    
+    "pickupFromLocation": "Pickup from your location",
+    "professionalPackaging": "Professional packaging",
+    "insuranceAvailable": "Insurance available",
+    "realTimeTracking": "Real-time tracking",
+    "personalShopping": "Personal shopping service",
+    "qualityVerification": "Quality verification",
+    "bulkConsolidation": "Bulk consolidation",
+    "expressShippingFeature": "Express shipping",
+    "threeTo7Days": "3-7 day delivery",
+    "premiumPackaging": "Premium packaging",
+    "fullInsurance": "Full insurance",
+    "priorityHandling": "Priority handling",
+    
+    "startingFrom2100": "Starting from ₹2,100",
+    "serviceFeeItemCost": "Service fee + item cost",
+    "startingFrom3800": "Starting from ₹3,800",
+    
+    "getShippingQuote": "Get Shipping Quote",
+    "calculateShipping": "Calculate your shipping cost and get an instant quote",
+    
+    "selectServiceType": "Select Service Type",
+    "itemName": "Item Name",
+    "itemNamePlaceholder": "Enter item name (e.g., Electronics, Clothing, Books)",
+    "packageWeight": "Package Weight (kg)",
+    "weightPlaceholder": "Enter weight in kg",
+    "packageType": "Package Type",
+    "selectPackageType": "Select package type",
+    "destinationCountry": "Destination Country",
+    "selectDestinationCountry": "Select destination country",
+    
+    "packageTypes": {
+      "documents": "Documents",
+      "foodItems": "Food Items",
+      "decorativeItems": "Decorative Items",
+      "clothingTextiles": "Clothing & Textiles",
+      "electronics": "Electronics",
+      "booksMedia": "Books & Media",
+      "other": "Other"
+    },
+    
+    "contactInformation": "Contact Information",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter last name",
+    "emailAddress": "Email Address",
+    "emailPlaceholder": "Enter email address",
+    "phoneNumber": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
+    
+    "shippingAddress": "Shipping Address",
+    "addressLine1": "Address Line 1",
+    "addressLine1Placeholder": "Street address, P.O. box, company name",
+    "addressLine2": "Address Line 2",
+    "addressLine2Placeholder": "Apartment, suite, unit, building, floor, etc.",
+    "city": "City",
+    "cityPlaceholder": "City",
+    "stateProvince": "State / Province",
+    "statePlaceholder": "State",
+    "postalZipCode": "Postal / ZIP Code",
+    "postalPlaceholder": "ZIP / Postal code",
+    "country": "Country",
+    "countryPlaceholder": "Country",
+    "additionalDeliveryInstructions": "Additional Delivery Instructions (Optional)",
+    "additionalNotesPlaceholder": "Special delivery instructions, gate codes, best time to deliver, etc.",
+    
+    "loginRequired": "Login Required",
+    "loginRequiredDesc": "You need to be logged in to submit a quote request. Click the button below to proceed.",
+    "loginToGetQuote": "Login to Get Quote",
+    "getQuote": "Get Quote",
+    "submitting": "Submitting...",
+    
+    "authenticationRequired": "Authentication Required",
+    "pleaseLogin": "Please log in to submit a quote request. You will be redirected to the login page.",
+    "missingInformation": "Missing Information",
+    "fillAllFields": "Please fill in all required fields including complete address details",
+    "quoteSentSuccess": "Quote Request Sent Successfully!",
+    "trackRequestBelow": "Your request is being tracked below. Watch for real-time status updates!",
+    "failedToSubmit": "Failed to submit request",
+    "errorOccurred": "There was an error submitting your quote request. Please try again or contact support.",
+    "permissionDenied": "Permission denied. Please ensure you are logged in with a valid account.",
+    
+    "purchaseOnBehalf": "Purchase on Behalf",
+    "purchaseDescription": "Can't find what you're looking for? We'll purchase it for you from anywhere in India.",
+    "internationalShipping": "International Shipping",
+    "shippingDescription": "Fast and reliable shipping to over 200 countries worldwide.",
+    "customsClearance": "Customs Clearance",
+    "customsDescription": "We handle all customs paperwork and clearance for you.",
+    "packageConsolidation": "Package Consolidation",
+    "consolidationDescription": "Combine multiple purchases into one shipment to save on shipping costs.",
+    "contactUs": "Contact Us"
+  },
+  "about": {
+    "hero": {
+      "title1": "From India",
+      "title2": ", With Love",
+      "subtitle": "Bridging continents and cultures, delivering authentic Indian treasures to your doorstep worldwide.",
+      "worldToIndia": "Connecting the World to India",
+      "worldToIndiaSubtitle": "Serving customers in over 50 countries across four continents with pride and precision."
+    },
+    "ourStory": {
+      "title": "Our Story",
+      "subtitle": "A decade-long journey of connecting cultures and delivering happiness across borders.",
+      "founded": {
+        "title": "Founded in 2014",
+        "para1": "Venkat Express was born from a simple yet powerful observation: people living abroad deeply miss the authentic products and flavors of India. Whether it's a special spice blend, traditional decorative items, or handcrafted artifacts, these connections to home are irreplaceable.",
+        "para2": "What started as a small operation in Hyderabad has grown into a trusted international courier service, specializing in food items and decorative products that carry the essence of Indian culture."
+      },
+      "growth": {
+        "title": "A Commitment to Excellence",
+        "para1": "Over the years, we've learned that successful international shipping is about more than logistics—it's about understanding the emotional value of every package. Each shipment represents someone's desire to stay connected to their roots, to share their culture, or to experience something new.",
+        "para2": "That's why we've invested heavily in specialized packaging, temperature-controlled solutions, and expertise in international customs regulations, particularly for food items and decorative goods."
+      },
+      "today": {
+        "title": "Today and Beyond",
+        "para1": "Today, Venkat Express serves customers in over 50 countries, managing everything from individual packages to large-scale commercial shipments. Our team of experts ensures every item—whether it's delicate sweets, aromatic spices, or intricate handicrafts—arrives safely and on time.",
+        "para2": "We're proud of our 99% safe delivery record and the trust our customers place in us. But what truly drives us is knowing that with every delivery, we're helping people maintain their cultural connections and create new memories."
+      }
+    },
+    "values": {
+      "title": "Our Core Values",
+      "subtitle": "The principles that guide every decision we make and service we provide.",
+      "authenticity": {
+        "title": "Authenticity",
+        "description": "Sourcing only the most genuine products from trusted suppliers across India."
+      },
+      "trust": {
+        "title": "Trust & Reliability",
+        "description": "Ensuring every package is handled with care and delivered securely to your doorstep."
+      },
+      "globalReach": {
+        "title": "Global Reach",
+        "description": "Connecting the Indian diaspora in over 50 countries to the tastes and culture of home."
+      },
+      "community": {
+        "title": "Community Support",
+        "description": "Empowering local artisans and farmers with a global platform for their authentic craft."
+      }
+    },
+    "stats": {
+      "yearsExperience": "Years of Experience",
+      "countriesServed": "Countries Served",
+      "happyCustomers": "Happy Customers",
+      "safeDelivery": "Safe Delivery"
+    },
+    "journey": {
+      "title": "Our Journey",
+      "subtitle": "A decade of growth, innovation, and unwavering commitment to excellence.",
+      "milestones": {
+        "2014": {
+          "title": "Founded in Hyderabad",
+          "description": "Venkat Express was established with a vision to bridge the gap between India and the world, starting with a small team passionate about cultural connections."
+        },
+        "2017": {
+          "title": "International Expansion",
+          "description": "Expanded services to 20+ countries across North America, Europe, and Asia, establishing key partnerships and logistics networks."
+        },
+        "2019": {
+          "title": "Specialized Excellence",
+          "description": "Became recognized experts in shipping food items and decorative products internationally, mastering complex regulations and preservation techniques."
+        },
+        "2022": {
+          "title": "Digital Transformation",
+          "description": "Launched our comprehensive online platform for seamless ordering, real-time tracking, and enhanced customer experience."
+        },
+        "2024": {
+          "title": "Industry Leader",
+          "description": "Proudly serving 50+ countries with 15,000+ satisfied customers and maintaining a 99% safe delivery record."
+        }
+      }
+    },
+    "advantages": {
+      "title": "Why Choose Venkat Express",
+      "subtitle": "What sets us apart in international shipping and logistics.",
+      "expressShipping": {
+        "title": "Express Worldwide Shipping",
+        "description": "Fast and reliable delivery to 50+ countries with full tracking and insurance."
+      },
+      "secureHandling": {
+        "title": "Secure Package Handling",
+        "description": "Industry-leading safety standards with specialized packaging and handling."
+      },
+      "authenticProducts": {
+        "title": "Authentic Products",
+        "description": "Sourced directly from trusted suppliers and verified for quality and authenticity."
+      },
+      "support": {
+        "title": "24/7 Customer Support",
+        "description": "Dedicated multilingual support team ready to assist you anytime, anywhere."
+      },
+      "customs": {
+        "title": "Customs Expertise",
+        "description": "Expert handling of international customs and documentation for hassle-free delivery."
+      },
+      "competitive": {
+        "title": "Competitive Pricing",
+        "description": "Transparent pricing with no hidden fees and flexible payment options."
+      }
+    },
+    "team": {
+      "title": "Meet Our Team",
+      "subtitle": "The passionate professionals behind every successful delivery and satisfied customer.",
+      "connect": "Connect"
+    },
+    "cta": {
+      "title1": "Ready to Experience",
+      "title2": "Authentic India?",
+      "subtitle": "Join thousands of satisfied customers worldwide who trust Venkat Express for authentic Indian products and reliable international shipping.",
+      "shopBtn": "Shop Products",
+      "quoteBtn": "Get a Quote"
+    }
+  },
+  "trackOrder": {
+    "pageTitle": "Track Your Order",
+    "pageSubtitle": "Enter your Order ID to track your shipment in real-time",
+    "orderIdLabel": "Order ID",
+    "orderIdPlaceholder": "Enter your Order ID (e.g., ORD123456)",
+    "trackOrderBtn": "Track Order",
+    "searching": "Searching...",
+    "liveTrackingActive": "Live Tracking Active",
+    "currentStatus": "Current Status:",
+    "shipmentProgress": "Shipment Progress",
+    "trackingHistory": "Tracking History",
+    "orderItems": "Order Items",
+    "totalAmount": "Total Amount",
+    "quantity": "Quantity:",
+    "orderIdText": "Order ID",
+    "orderDate": "Order Date",
+    "estimatedDelivery": "Estimated Delivery",
+    "businessDays": "7-14 business days",
+    "current": "Current",
+    "currentStatusBadge": "Current Status",
+    "product": "Product",
+    "statuses": {
+      "pending": "Order Placed",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "outForDelivery": "Out for Delivery",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "errors": {
+      "enterOrderId": "Please enter an Order ID",
+      "orderNotFound": "Order not found. Please check your Order ID and try again.",
+      "fetchFailed": "Failed to fetch order details. Please try again.",
+      "genericError": "An error occurred. Please try again."
+    },
+    "toast": {
+      "orderStatusUpdated": "Order status updated!",
+      "trackingRefreshed": "Tracking information has been refreshed"
+    }
+  },
+  "location": {
+    "selectLocation": "Select Location",
+    "deliverTo": "Deliver to",
+    "changeLocation": "Change Location",
+    "currentLocation": "Current Location",
+    "enterPincode": "Enter Pincode",
+    "detectLocation": "Detect my location"
+  },
+  "wishlist": {
+    "myWishlist": "My Wishlist",
+    "emptyWishlist": "Your wishlist is empty",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "moveToCart": "Move to Cart",
+    "wishlistItems": "Wishlist Items"
+  },
+  "notifications": {
+    "notifications": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "newOrder": "New Order",
+    "orderShipped": "Order Shipped",
+    "orderDelivered": "Order Delivered",
+    "offerAvailable": "Offer Available"
+  },
+  "addresses": {
+    "savedAddresses": "Saved Addresses",
+    "addNewAddress": "Add New Address",
+    "editAddress": "Edit Address",
+    "deleteAddress": "Delete Address",
+    "setDefault": "Set as Default",
+    "defaultAddress": "Default Address",
+    "name": "Name",
+    "phone": "Phone",
+    "addressLine1": "Address Line 1",
+    "addressLine2": "Address Line 2",
+    "city": "City",
+    "state": "State",
+    "pincode": "Pincode",
+    "country": "Country"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Invalid phone number",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match",
+    "invalidPincode": "Invalid pincode"
+  },
+  "messages": {
+    "success": "Success!",
+    "addedToCart": "Added to cart",
+    "removedFromCart": "Removed from cart",
+    "addedToWishlist": "Added to wishlist",
+    "removedFromWishlist": "Removed from wishlist",
+    "orderPlaced": "Order placed successfully",
+    "orderCancelled": "Order cancelled",
+    "profileUpdated": "Profile updated successfully",
+    "addressAdded": "Address added successfully",
+    "addressUpdated": "Address updated successfully",
+    "addressDeleted": "Address deleted successfully",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  },
+  "prohibited": {
+    "hero": {
+      "title": "Prohibited & Restricted Items",
+      "subtitleMobile": "Items we cannot ship for safety and legal compliance.",
+      "subtitleDesktop": "For the safety of our carriers and compliance with international law, please ensure your shipment does not contain any of the items listed below."
+    },
+    "categories": {
+      "dangerous": {
+        "title": "🚫 Dangerous / Hazardous Goods",
+        "items": {
+          "explosives": "Explosives",
+          "gasCylinders": "Gas Cylinders",
+          "paints": "Paints",
+          "firearms": "Firearms",
+          "ammunition": "Ammunition",
+          "flammableLiquids": "Flammable Liquids",
+          "toxicSubstances": "Toxic Substances",
+          "corrosiveMaterials": "Corrosive Materials",
+          "radioactiveItems": "Radioactive Items",
+          "compressedGases": "Compressed Gases"
+        }
+      },
+      "illegal": {
+        "title": "🚫 Illegal / Restricted Substances",
+        "items": {
+          "narcotics": "Narcotics",
+          "cannabisProducts": "Cannabis Products",
+          "alcoholicBeverages": "Alcoholic Beverages",
+          "tobaccoProducts": "Tobacco Products",
+          "prescriptionMedicines": "Prescription Medicines",
+          "eCigarettes": "E-cigarettes",
+          "vapingProducts": "Vaping Products",
+          "controlledSubstances": "Controlled Substances"
+        }
+      },
+      "perishable": {
+        "title": "🚫 Perishable & Biological Items",
+        "items": {
+          "rice": "Rice",
+          "salt": "Salt",
+          "freshFruits": "Fresh Fruits",
+          "freshVegetables": "Fresh Vegetables",
+          "meat": "Meat",
+          "dairyProducts": "Dairy Products",
+          "liveAnimals": "Live Animals",
+          "livePlants": "Live Plants",
+          "seeds": "Seeds",
+          "biologicalSpecimens": "Biological Specimens"
+        }
+      },
+      "highValue": {
+        "title": "🚫 High-Value & Restricted Items",
+        "items": {
+          "currencyNotes": "Currency Notes",
+          "coins": "Coins",
+          "preciousMetals": "Precious Metals",
+          "gold": "Gold",
+          "silver": "Silver",
+          "diamonds": "Diamonds",
+          "jewelry": "Jewelry (High-Value)",
+          "negotiableInstruments": "Negotiable Instruments",
+          "bearerBonds": "Bearer Bonds"
+        }
+      },
+      "documents": {
+        "title": "🚫 Documents & Data Restrictions",
+        "items": {
+          "passports": "Passports",
+          "governmentIDs": "Government IDs",
+          "creditCards": "Credit/Debit Cards",
+          "atmCards": "ATM Cards",
+          "simCards": "SIM Cards",
+          "hardDrives": "Hard Drives with Data",
+          "confidentialDocuments": "Confidential Documents",
+          "legalCertificates": "Legal Certificates"
+        }
+      },
+      "miscellaneous": {
+        "title": "🚫 Miscellaneous Prohibited Items",
+        "items": {
+          "pornographicMaterial": "Pornographic Material",
+          "counterfeitGoods": "Counterfeit Goods",
+          "piratedProducts": "Pirated Products",
+          "aerosols": "Aerosols",
+          "perfumesLarge": "Perfumes (Large Qty)",
+          "batteriesLoose": "Batteries (Loose)",
+          "lighters": "Lighters",
+          "matches": "Matches",
+          "sharpObjects": "Sharp Objects",
+          "weapons": "Weapons",
+          "antiques": "Antiques",
+          "ivoryProducts": "Ivory Products",
+          "animalProducts": "Animal Products",
+          "hazardousWaste": "Hazardous Waste"
+        }
+      }
+    },
+    "disclaimer": {
+      "title": "⚠️ Important Notice",
+      "text1": "Each country and courier service has its own restricted/prohibited list. Some items (like lithium batteries, alcohol, or medicines) may require special approval or packaging, while others are completely banned.",
+      "text2": "Please contact our customer support team",
+      "text3": "before shipping if you have any questions about specific items or requirements for your destination country."
+    },
+    "cta": {
+      "title": "Need Help Shipping Something?",
+      "subtitle": "Our team of experts can help you navigate international shipping regulations and ensure your package arrives safely.",
+      "quoteBtn": "Request a Quote",
+      "browseBtn": "Browse Products"
+    }
+  },
+  "foodItems": {
+    "title": "Authentic Spices & Sauces",
+    "subtitle": "Premium Indian food products, spices, and authentic ingredients",
+    "searchPlaceholder": "Search food items...",
+    "filters": "Filters",
+    "sortBy": "Sort By",
+    "priceRange": "Price Range",
+    "featured": "Featured",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "showing": "Showing",
+    "item": "item",
+    "items": "items",
+    "addToCart": "Add to Cart",
+    "noProducts": "No food items found matching your filters.",
+    "loading": "Loading food items..."
+  },
+  "decorativeItems": {
+    "title": "Handcrafted Home Decor",
+    "subtitle": "Beautiful decorative items to enhance your living space",
+    "searchPlaceholder": "Search decorative items...",
+    "filters": "Filters",
+    "sortBy": "Sort By",
+    "priceRange": "Price Range",
+    "featured": "Featured",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "showing": "Showing",
+    "item": "item",
+    "items": "items",
+    "addToCart": "Add to Cart",
+    "noProducts": "No decorative items found matching your filters.",
+    "loading": "Loading decorative items..."
+  }
+}

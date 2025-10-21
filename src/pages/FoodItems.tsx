@@ -11,6 +11,7 @@ import { Search, SlidersHorizontal, Loader2, Heart, Grid, List, X, ArrowLeft, Ch
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const FoodItems = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const FoodItems = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
@@ -80,7 +82,7 @@ const FoodItems = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="font-heading text-lg font-bold">
-            Authentic Spices & Sauces
+            {t('foodItems.title')}
           </h1>
         </div>
       </div>
@@ -93,10 +95,10 @@ const FoodItems = () => {
         <div className="hidden md:flex items-center gap-4">
           <div>
             <h1 className="font-heading text-lg lg:text-xl font-bold mb-0.5 lg:mb-1">
-              Authentic Spices & Sauces
+              {t('foodItems.title')}
             </h1>
             <p className="text-xs text-muted-foreground">
-              Premium Indian food products, spices, and authentic ingredients
+              {t('foodItems.subtitle')}
             </p>
           </div>
 
@@ -104,7 +106,7 @@ const FoodItems = () => {
           <div className="relative w-full max-w-md">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search food items..."
+              placeholder={t('foodItems.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-9 text-sm"
@@ -115,16 +117,14 @@ const FoodItems = () => {
           <div className="flex-1"></div>
 
           {/* Filter Button - Desktop */}
-          <Button 
+            <Button 
             variant="outline" 
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 shrink-0"
           >
             <SlidersHorizontal className="h-4 w-4" />
-            <span>Filters</span>
-          </Button>
-
-          {/* View Mode Toggle - Desktop */}
+            <span>{t('foodItems.filters')}</span>
+          </Button>          {/* View Mode Toggle - Desktop */}
           <div className="flex gap-2 shrink-0">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'outline'}
@@ -152,7 +152,7 @@ const FoodItems = () => {
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search food items..."
+              placeholder={t('foodItems.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-9 text-sm"
@@ -166,14 +166,14 @@ const FoodItems = () => {
             className="flex items-center gap-2"
           >
             <SlidersHorizontal className="h-4 w-4" />
-            <span className="hidden sm:inline">Filters</span>
+            <span className="hidden sm:inline">{t('foodItems.filters')}</span>
           </Button>
         </div>
 
         {/* Second Row: Results Count and View Mode Toggle */}
         <div className="flex gap-2 justify-between items-center">
           <div className="text-sm text-muted-foreground">
-            Showing {filteredProducts.length} item{filteredProducts.length !== 1 ? 's' : ''}
+            {t('foodItems.showing')} {filteredProducts.length} {filteredProducts.length !== 1 ? t('foodItems.items') : t('foodItems.item')}
           </div>
           <div className="flex gap-2">
             <Button
@@ -221,7 +221,7 @@ const FoodItems = () => {
                   {/* Header */}
                   <div className="flex items-center justify-between border-b pb-4">
                     <h2 className="text-lg font-semibold flex items-center gap-2">
-                      Filters
+                      {t('foodItems.filters')}
                     </h2>
                     <Button 
                       variant="ghost" 
@@ -238,7 +238,7 @@ const FoodItems = () => {
                       onClick={() => toggleSection('sortBy')}
                       className="w-full flex items-center justify-between py-2 text-sm font-semibold uppercase text-gray-700 hover:text-gray-900"
                     >
-                      <span>Sort By</span>
+                      <span>{t('foodItems.sortBy')}</span>
                       <ChevronDown className={cn(
                         "h-4 w-4 transition-transform",
                         openSections.sortBy && "rotate-180"
@@ -255,7 +255,7 @@ const FoodItems = () => {
                               : "hover:bg-gray-100"
                           )}
                         >
-                          Featured
+                          {t('foodItems.featured')}
                         </button>
                         <button
                           onClick={() => setSortBy('price-low')}
@@ -266,7 +266,7 @@ const FoodItems = () => {
                               : "hover:bg-gray-100"
                           )}
                         >
-                          Price: Low to High
+                          {t('foodItems.priceLowToHigh')}
                         </button>
                         <button
                           onClick={() => setSortBy('price-high')}
@@ -277,7 +277,7 @@ const FoodItems = () => {
                               : "hover:bg-gray-100"
                           )}
                         >
-                          Price: High to Low
+                          {t('foodItems.priceHighToLow')}
                         </button>
                       </div>
                     )}
@@ -289,7 +289,7 @@ const FoodItems = () => {
                       onClick={() => toggleSection('price')}
                       className="w-full flex items-center justify-between py-2 text-sm font-semibold uppercase text-gray-700 hover:text-gray-900"
                     >
-                      <span>Price Range</span>
+                      <span>{t('foodItems.priceRange')}</span>
                       <ChevronDown className={cn(
                         "h-4 w-4 transition-transform",
                         openSections.price && "rotate-180"
@@ -328,7 +328,7 @@ const FoodItems = () => {
 
       {/* Results Count - Desktop Only */}
       <div className="hidden md:block mb-4 text-sm text-muted-foreground">
-        Showing {filteredProducts.length} food item{filteredProducts.length !== 1 ? 's' : ''}
+        {t('foodItems.showing')} {filteredProducts.length} {filteredProducts.length !== 1 ? t('foodItems.items') : t('foodItems.item')}
       </div>
 
       {/* Products Grid/List */}
@@ -338,7 +338,7 @@ const FoodItems = () => {
         </div>
       ) : filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No food items found matching your criteria.</p>
+          <p className="text-muted-foreground">{t('foodItems.noProducts')}</p>
         </div>
       ) : (
         <div
@@ -428,7 +428,7 @@ const FoodItems = () => {
                   )}
                   disabled={product.stock === 0}
                 >
-                  <span className="mr-1">+</span> {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                  <span className="mr-1">+</span> {product.stock === 0 ? t('products.outOfStock') : t('foodItems.addToCart')}
                 </Button>
               </div>
             </motion.div>

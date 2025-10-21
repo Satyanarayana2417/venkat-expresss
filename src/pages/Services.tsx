@@ -15,8 +15,10 @@ import { toast as sonnerToast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { QuoteTimeline } from '@/components/QuoteTimeline';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useTranslation } from 'react-i18next';
 
 const Services = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -92,8 +94,8 @@ const Services = () => {
     
     // Check if user is authenticated - REQUIRED by security rules
     if (!user) {
-      sonnerToast.error('Authentication Required', {
-        description: 'Please log in to submit a quote request. You will be redirected to the login page.',
+      sonnerToast.error(t('services.authenticationRequired'), {
+        description: t('services.pleaseLogin'),
         duration: 5000,
         action: {
           label: 'Login',
@@ -114,8 +116,8 @@ const Services = () => {
         !formData.email || !formData.phone || !formData.addressLine1 || 
         !formData.city || !formData.state || !formData.postalCode || !formData.country) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields including complete address details",
+        title: t('services.missingInformation'),
+        description: t('services.fillAllFields'),
         variant: "destructive",
       });
       return;
@@ -170,8 +172,8 @@ const Services = () => {
       console.log('✅ Quote created and linked to user profile:', docRef.id);
 
       // Show success message with Sonner toast for better visibility
-      sonnerToast.success('Quote Request Sent Successfully!', {
-        description: 'Your request is being tracked below. Watch for real-time status updates!',
+      sonnerToast.success(t('services.quoteSentSuccess'), {
+        description: t('services.trackRequestBelow'),
         duration: 6000,
       });
 
@@ -206,15 +208,15 @@ const Services = () => {
       console.error('Error submitting quote request:', error);
       
       // Provide specific error message based on error type
-      let errorMessage = 'There was an error submitting your quote request. Please try again or contact support.';
+      let errorMessage = t('services.errorOccurred');
       
       if (error?.code === 'permission-denied') {
-        errorMessage = 'Permission denied. Please ensure you are logged in with a valid account.';
+        errorMessage = t('services.permissionDenied');
       } else if (error?.message) {
         errorMessage = error.message;
       }
       
-      sonnerToast.error('Failed to submit request', {
+      sonnerToast.error(t('services.failedToSubmit'), {
         description: errorMessage,
         duration: 5000,
       });
@@ -225,48 +227,48 @@ const Services = () => {
 
   const services = [
     {
-      title: 'You Give, We Ship',
-      description: 'Already have products? Bring them to our Hyderabad branch or schedule a pickup.',
+      title: t('services.youGiveWeShip'),
+      description: t('services.youGiveWeShipDesc'),
       features: [
-        'Pickup from your location',
-        'Professional packaging',
-        'Insurance available',
-        'Real-time tracking',
+        t('services.pickupFromLocation'),
+        t('services.professionalPackaging'),
+        t('services.insuranceAvailable'),
+        t('services.realTimeTracking'),
       ],
-      pricing: 'Starting from ₹2,100',
+      pricing: t('services.startingFrom2100'),
     },
     {
-      title: 'We Buy for You',
-      description: 'Select products from our catalog or request specific items from India.',
+      title: t('services.weBuyForYou'),
+      description: t('services.weBuyForYouDesc'),
       features: [
-        'Personal shopping service',
-        'Quality verification',
-        'Bulk consolidation',
-        'Express shipping',
+        t('services.personalShopping'),
+        t('services.qualityVerification'),
+        t('services.bulkConsolidation'),
+        t('services.expressShippingFeature'),
       ],
-      pricing: 'Service fee + item cost',
+      pricing: t('services.serviceFeeItemCost'),
     },
     {
-      title: 'Express Shipping',
-      description: 'Need it fast? Our premium express service gets your items delivered quickly.',
+      title: t('services.expressShipping'),
+      description: t('services.expressShippingDesc'),
       features: [
-        '3-7 day delivery',
-        'Premium packaging',
-        'Full insurance',
-        'Priority handling',
+        t('services.threeTo7Days'),
+        t('services.premiumPackaging'),
+        t('services.fullInsurance'),
+        t('services.priorityHandling'),
       ],
-      pricing: 'Starting from ₹3,800',
+      pricing: t('services.startingFrom3800'),
     },
   ];
 
   const packageTypes = [
-    'Documents',
-    'Food Items',
-    'Decorative Items',
-    'Clothing & Textiles',
-    'Electronics',
-    'Books & Media',
-    'Other',
+    t('services.packageTypes.documents'),
+    t('services.packageTypes.foodItems'),
+    t('services.packageTypes.decorativeItems'),
+    t('services.packageTypes.clothingTextiles'),
+    t('services.packageTypes.electronics'),
+    t('services.packageTypes.booksMedia'),
+    t('services.packageTypes.other'),
   ];
 
   const countries = [
@@ -479,15 +481,15 @@ const Services = () => {
             </button>
             
             <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Courier Services
+              {t('services.pageTitle')}
             </h1>
             {/* Mobile text */}
             <p className="text-base md:hidden text-white/90 leading-relaxed">
-              Your personal courier and shopper, from India to the world.
+              {t('services.pageSubtitleMobile')}
             </p>
             {/* Desktop text */}
             <p className="hidden md:block text-base md:text-lg text-white/90 leading-relaxed">
-              Professional courier services from India to the world. Whether you want to send personal items or need us to shop on your behalf, we've got you covered.
+              {t('services.pageSubtitleDesktop')}
             </p>
           </div>
         </div>
@@ -497,10 +499,10 @@ const Services = () => {
       <section className="container mx-auto px-4 lg:px-6 pt-8 pb-16 md:pt-10 md:pb-20">
         <div className="text-center mb-12">
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-            Our Services
+            {t('services.ourServices')}
           </h2>
           <p className="hidden md:block text-muted-foreground text-lg max-w-2xl mx-auto">
-            Choose the service that best fits your needs
+            {t('services.chooseService')}
           </p>
         </div>
 
@@ -544,10 +546,10 @@ const Services = () => {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-              Get Shipping Quote
+              {t('services.getShippingQuote')}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Calculate your shipping cost and get an instant quote
+              {t('services.calculateShipping')}
             </p>
           </div>
 
@@ -561,7 +563,7 @@ const Services = () => {
                       {/* Service Type */}
                       <div className="space-y-3">
                         <Label className="text-base font-semibold text-gray-900">
-                          Select Service Type *
+                          {t('services.selectServiceType')} *
                         </Label>
                         <RadioGroup 
                           value={formData.serviceType}
@@ -571,13 +573,13 @@ const Services = () => {
                           <div className="flex items-center space-x-3 border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                             <RadioGroupItem value="you-give-we-ship" id="service1" />
                             <Label htmlFor="service1" className="cursor-pointer flex-1 font-medium">
-                              You Give, We Ship
+                              {t('services.youGiveWeShip')}
                             </Label>
                           </div>
                           <div className="flex items-center space-x-3 border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                             <RadioGroupItem value="we-buy-for-you" id="service2" />
                             <Label htmlFor="service2" className="cursor-pointer flex-1 font-medium">
-                              We Buy for You
+                              {t('services.weBuyForYou')}
                             </Label>
                           </div>
                         </RadioGroup>
@@ -586,12 +588,12 @@ const Services = () => {
                       {/* Item Name */}
                       <div className="space-y-2">
                         <Label htmlFor="itemName" className="text-base font-semibold text-gray-900">
-                          Item Name *
+                          {t('services.itemName')} *
                         </Label>
                         <Input
                           id="itemName"
                           type="text"
-                          placeholder="Enter item name (e.g., Electronics, Clothing, Books)"
+                          placeholder={t('services.itemNamePlaceholder')}
                           value={formData.itemName}
                           onChange={(e) => handleInputChange('itemName', e.target.value)}
                           className="text-base"
@@ -602,14 +604,14 @@ const Services = () => {
                       {/* Package Weight */}
                       <div className="space-y-2">
                         <Label htmlFor="weight" className="text-base font-semibold text-gray-900">
-                          Package Weight (kg) *
+                          {t('services.packageWeight')} *
                         </Label>
                         <Input
                           id="weight"
                           type="number"
                           step="0.1"
                           min="0"
-                          placeholder="Enter weight in kg"
+                          placeholder={t('services.weightPlaceholder')}
                           value={formData.weight}
                           onChange={(e) => handleInputChange('weight', e.target.value)}
                           className="text-base"
@@ -620,14 +622,14 @@ const Services = () => {
                       {/* Package Type */}
                       <div className="space-y-2">
                         <Label htmlFor="packageType" className="text-base font-semibold text-gray-900">
-                          Package Type *
+                          {t('services.packageType')} *
                         </Label>
                         <Select 
                           value={formData.packageType}
                           onValueChange={(value) => handleInputChange('packageType', value)}
                         >
                           <SelectTrigger className="text-base">
-                            <SelectValue placeholder="Select package type" />
+                            <SelectValue placeholder={t('services.selectPackageType')} />
                           </SelectTrigger>
                           <SelectContent>
                             {packageTypes.map((type) => (
@@ -642,14 +644,14 @@ const Services = () => {
                       {/* Destination Country */}
                       <div className="space-y-2">
                         <Label htmlFor="destinationCountry" className="text-base font-semibold text-gray-900">
-                          Destination Country *
+                          {t('services.destinationCountry')} *
                         </Label>
                         <Select 
                           value={formData.destinationCountry}
                           onValueChange={(value) => handleInputChange('destinationCountry', value)}
                         >
                           <SelectTrigger className="text-base uppercase">
-                            <SelectValue placeholder="Select destination country" />
+                            <SelectValue placeholder={t('services.selectDestinationCountry')} />
                           </SelectTrigger>
                           <SelectContent className="max-h-[300px]">
                             {countries.map((country) => (
@@ -670,18 +672,18 @@ const Services = () => {
                     <div className="space-y-6">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Contact Information
+                          {t('services.contactInformation')}
                         </h3>
                         <div className="space-y-4">
                           {/* First Name */}
                           <div className="space-y-2">
                             <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
-                              First Name *
+                              {t('services.firstName')} *
                             </Label>
                             <Input
                               id="firstName"
                               type="text"
-                              placeholder="Enter first name"
+                              placeholder={t('services.firstNamePlaceholder')}
                               value={formData.firstName}
                               onChange={(e) => handleInputChange('firstName', e.target.value)}
                               required
@@ -691,12 +693,12 @@ const Services = () => {
                           {/* Last Name */}
                           <div className="space-y-2">
                             <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
-                              Last Name *
+                              {t('services.lastName')} *
                             </Label>
                             <Input
                               id="lastName"
                               type="text"
-                              placeholder="Enter last name"
+                              placeholder={t('services.lastNamePlaceholder')}
                               value={formData.lastName}
                               onChange={(e) => handleInputChange('lastName', e.target.value)}
                               required
@@ -706,12 +708,12 @@ const Services = () => {
                           {/* Email */}
                           <div className="space-y-2">
                             <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                              Email Address *
+                              {t('services.emailAddress')} *
                             </Label>
                             <Input
                               id="email"
                               type="email"
-                              placeholder="Enter email address"
+                              placeholder={t('services.emailPlaceholder')}
                               value={formData.email}
                               onChange={(e) => handleInputChange('email', e.target.value)}
                               required
@@ -721,12 +723,12 @@ const Services = () => {
                           {/* Phone */}
                           <div className="space-y-2">
                             <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
-                              Phone Number *
+                              {t('services.phoneNumber')} *
                             </Label>
                             <Input
                               id="phone"
                               type="tel"
-                              placeholder="Enter phone number"
+                              placeholder={t('services.phonePlaceholder')}
                               value={formData.phone}
                               onChange={(e) => handleInputChange('phone', e.target.value)}
                               required
@@ -739,18 +741,18 @@ const Services = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                           <MapPin className="h-5 w-5 text-gray-600" />
-                          Shipping Address
+                          {t('services.shippingAddress')}
                         </h3>
                         <div className="space-y-4">
                           {/* Address Line 1 */}
                           <div className="space-y-2">
                             <Label htmlFor="addressLine1" className="text-sm font-medium text-gray-700">
-                              Address Line 1 *
+                              {t('services.addressLine1')} *
                             </Label>
                             <Input
                               id="addressLine1"
                               type="text"
-                              placeholder="Street address, P.O. box, company name"
+                              placeholder={t('services.addressLine1Placeholder')}
                               value={formData.addressLine1}
                               onChange={(e) => handleInputChange('addressLine1', e.target.value)}
                               required
@@ -760,12 +762,12 @@ const Services = () => {
                           {/* Address Line 2 */}
                           <div className="space-y-2">
                             <Label htmlFor="addressLine2" className="text-sm font-medium text-gray-700">
-                              Address Line 2
+                              {t('services.addressLine2')}
                             </Label>
                             <Input
                               id="addressLine2"
                               type="text"
-                              placeholder="Apartment, suite, unit, building, floor, etc."
+                              placeholder={t('services.addressLine2Placeholder')}
                               value={formData.addressLine2}
                               onChange={(e) => handleInputChange('addressLine2', e.target.value)}
                             />
@@ -775,12 +777,12 @@ const Services = () => {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="city" className="text-sm font-medium text-gray-700">
-                                City *
+                                {t('services.city')} *
                               </Label>
                               <Input
                                 id="city"
                                 type="text"
-                                placeholder="City"
+                                placeholder={t('services.cityPlaceholder')}
                                 value={formData.city}
                                 onChange={(e) => handleInputChange('city', e.target.value)}
                                 required
@@ -789,12 +791,12 @@ const Services = () => {
 
                             <div className="space-y-2">
                               <Label htmlFor="state" className="text-sm font-medium text-gray-700">
-                                State / Province *
+                                {t('services.stateProvince')} *
                               </Label>
                               <Input
                                 id="state"
                                 type="text"
-                                placeholder="State"
+                                placeholder={t('services.statePlaceholder')}
                                 value={formData.state}
                                 onChange={(e) => handleInputChange('state', e.target.value)}
                                 required
@@ -806,12 +808,12 @@ const Services = () => {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="postalCode" className="text-sm font-medium text-gray-700">
-                                Postal / ZIP Code *
+                                {t('services.postalZipCode')} *
                               </Label>
                               <Input
                                 id="postalCode"
                                 type="text"
-                                placeholder="ZIP / Postal code"
+                                placeholder={t('services.postalPlaceholder')}
                                 value={formData.postalCode}
                                 onChange={(e) => handleInputChange('postalCode', e.target.value)}
                                 required
@@ -820,12 +822,12 @@ const Services = () => {
 
                             <div className="space-y-2">
                               <Label htmlFor="country" className="text-sm font-medium text-gray-700">
-                                Country *
+                                {t('services.country')} *
                               </Label>
                               <Input
                                 id="country"
                                 type="text"
-                                placeholder="Country"
+                                placeholder={t('services.countryPlaceholder')}
                                 value={formData.country}
                                 onChange={(e) => handleInputChange('country', e.target.value)}
                                 required
@@ -836,11 +838,11 @@ const Services = () => {
                           {/* Additional Notes */}
                           <div className="space-y-2">
                             <Label htmlFor="additionalNotes" className="text-sm font-medium text-gray-700">
-                              Additional Delivery Instructions (Optional)
+                              {t('services.additionalDeliveryInstructions')}
                             </Label>
                             <Textarea
                               id="additionalNotes"
-                              placeholder="Special delivery instructions, gate codes, best time to deliver, etc."
+                              placeholder={t('services.additionalNotesPlaceholder')}
                               value={formData.additionalNotes}
                               onChange={(e) => handleInputChange('additionalNotes', e.target.value)}
                               rows={3}
@@ -857,9 +859,9 @@ const Services = () => {
                       <div className="flex items-start gap-3">
                         <LogIn className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-blue-900">Login Required</p>
+                          <p className="text-sm font-medium text-blue-900">{t('services.loginRequired')}</p>
                           <p className="text-xs text-blue-700 mt-1">
-                            You need to be logged in to submit a quote request. Click the button below to proceed.
+                            {t('services.loginRequiredDesc')}
                           </p>
                         </div>
                       </div>
@@ -879,15 +881,15 @@ const Services = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                           </svg>
-                          Submitting...
+                          {t('services.submittingQuote')}
                         </span>
                       ) : !user ? (
                         <span className="flex items-center justify-center gap-2">
                           <LogIn className="h-5 w-5" />
-                          Login to Get Quote
+                          {t('services.loginToGetQuote')}
                         </span>
                       ) : (
-                        'Get Quote'
+                        t('services.getQuoteBtn')
                       )}
                     </Button>
                   </div>

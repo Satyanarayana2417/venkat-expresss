@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { doc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, MapPin, Clock, X } from 'lucide-react';
+import { Plus, MapPin, Clock, X, CreditCard, Image as ImageIcon, ExternalLink } from 'lucide-react';
 
 interface TrackingEvent {
   status: string;
@@ -121,6 +121,107 @@ export const AdminOrderDetail = ({ orderId, isOpen, onClose }: OrderDetailProps)
                 <Badge className="text-base px-4 py-2">
                   {order.status?.replace(/-/g, ' ').toUpperCase() || 'PENDING'}
                 </Badge>
+              </CardContent>
+            </Card>
+
+            {/* Payment Confirmation Details */}
+            <Card className="border-2 border-green-200 bg-green-50/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-green-900">
+                  <CreditCard className="h-5 w-5" />
+                  Payment Confirmation Details
+                </CardTitle>
+                <CardDescription>
+                  Customer-provided payment verification information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* UPI Transaction ID */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">
+                      UPI Transaction ID
+                    </Label>
+                    {order.upiTransactionId ? (
+                      <div className="bg-white p-3 rounded-lg border border-gray-200">
+                        <p className="font-mono text-sm break-all">
+                          {order.upiTransactionId}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic">
+                        No transaction ID provided
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Payment Method */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">
+                      Payment Method
+                    </Label>
+                    <div className="bg-white p-3 rounded-lg border border-gray-200">
+                      <p className="text-sm font-medium">
+                        {order.paymentMethod || 'UPI Payment'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Screenshot */}
+                {order.paymentScreenshotUrl && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      Payment Screenshot
+                    </Label>
+                    <div className="bg-white p-3 rounded-lg border-2 border-gray-300">
+                      <div className="relative group">
+                        <img
+                          src={order.paymentScreenshotUrl}
+                          alt="Payment Screenshot"
+                          className="w-full max-h-96 object-contain rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(order.paymentScreenshotUrl, '_blank')}
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="shadow-lg"
+                            onClick={() => window.open(order.paymentScreenshotUrl, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            View Full Size
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2 text-center">
+                        Click image to view in full size
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {!order.paymentScreenshotUrl && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800 flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      No payment screenshot was uploaded by the customer
+                    </p>
+                  </div>
+                )}
+
+                {/* Payment Status */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold text-gray-700">
+                    Payment Status
+                  </Label>
+                  <div className="bg-white p-3 rounded-lg border border-gray-200">
+                    <Badge variant={order.paymentStatus === 'Verified' ? 'default' : 'secondary'}>
+                      {order.paymentStatus || 'Pending Verification'}
+                    </Badge>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

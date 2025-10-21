@@ -5,6 +5,7 @@
  */
 
 export interface LocationData {
+  street?: string;        // Street name (optional)
   area: string;           // Neighborhood/Area name
   city: string;           // City name
   state: string;          // State/Province
@@ -124,6 +125,7 @@ const reverseGeocodeWithGoogle = async (
     return component?.long_name || '';
   };
 
+  const street = getComponent(['route']);
   const area = getComponent(['sublocality', 'neighborhood', 'locality']);
   const city = getComponent(['locality', 'administrative_area_level_2']);
   const state = getComponent(['administrative_area_level_1']);
@@ -131,7 +133,18 @@ const reverseGeocodeWithGoogle = async (
   const countryCode = addressComponents.find((c: any) => c.types.includes('country'))?.short_name || '';
   const postalCode = getComponent(['postal_code']);
 
+  // Debug: Log extracted components
+  console.log('🗺️ Google Maps Geocoding Results:', {
+    street,
+    area,
+    city,
+    state,
+    country,
+    formattedAddress: result.formatted_address
+  });
+
   return {
+    street: street || undefined,
     area: area || city,
     city: city || area,
     state,
@@ -162,6 +175,7 @@ const reverseGeocodeWithBigDataCloud = async (
   const data = await response.json();
 
   return {
+    street: data.localityInfo?.administrative?.[6]?.name || undefined,
     area: data.locality || data.city || data.principalSubdivision || '',
     city: data.city || data.locality || '',
     state: data.principalSubdivision || '',
@@ -199,6 +213,7 @@ const reverseGeocodeWithOpenCage = async (
   const components = result.components;
 
   return {
+    street: components.road || components.street || undefined,
     area: components.neighbourhood || components.suburb || components.city || '',
     city: components.city || components.town || components.village || '',
     state: components.state || components.region || '',
@@ -308,21 +323,41 @@ export const formatLocationDisplay = (location: LocationData): string => {
 };
 
 /**
- * Format location for header display (compact version)
+ * Format location for header display (compact version with street-level detail)
  */
 export const formatLocationForHeader = (location: LocationData): {
   line1: string;
   line2: string;
 } => {
-  // Line 1: Area and City
+  // Debug: Log what we're receiving
+  console.log('📍 Formatting location for header:', {
+    street: location.street,
+    area: location.area,
+    city: location.city,
+    state: location.state,
+    country: location.country
+  });
+
+  // Line 1: Street, Area, and City (prioritize street-level detail)
   const line1Parts: string[] = [];
+  
+  // Add street name if available (highest priority)
+  if (location.street) {
+    line1Parts.push(location.street);
+  }
+  
+  // Add area if it's different from city
   if (location.area && location.area !== location.city) {
     line1Parts.push(location.area);
   }
+  
+  // Add city
   if (location.city) {
     line1Parts.push(location.city);
   }
-  const line1 = line1Parts.join(', ') || 'Unknown Location';
+  
+  // Fallback if no street or area
+  const line1 = line1Parts.join(' • ') || location.city || 'Unknown Location';
 
   // Line 2: State and Country
   const line2Parts: string[] = [];
@@ -409,6 +444,7 @@ export const markPermissionAsked = (): void => {
  */
 export const getDefaultLocation = (): LocationData => {
   return {
+    street: undefined,
     area: 'Hyderabad',
     city: 'Hyderabad',
     state: 'Telangana',

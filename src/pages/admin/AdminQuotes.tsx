@@ -12,6 +12,7 @@ import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } fro
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useSettings } from '@/hooks/useSettings';
 import {
   Dialog,
   DialogContent,
@@ -60,6 +61,9 @@ export const AdminQuotes = () => {
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  
+  // Load admin settings for dynamic contact info in emails
+  const { settings } = useSettings();
 
   // Real-time listener for quote requests
   useEffect(() => {
@@ -212,13 +216,18 @@ export const AdminQuotes = () => {
     }).format(amount);
   };
 
-  // Generate comprehensive mailto link for customer email
-  const generateMailtoLink = (quote: QuoteRequest) => {
+  // Generate Gmail compose URL for customer email with dynamic contact info
+  const generateGmailComposeLink = (quote: QuoteRequest) => {
     const subject = `Quote Request #${quote.id.substring(0, 8).toUpperCase()} - ${quote.firstName} ${quote.lastName}`;
+    
+    // Use dynamic contact information from admin settings
+    const storeName = settings.storeName || 'Venkat Express';
+    const contactPhone = settings.contactPhone || '+91 XXXXXXXXXX';
+    const contactEmail = settings.contactEmail || 'support@venkatexpress.com';
     
     const body = `Dear ${quote.firstName} ${quote.lastName},
 
-Thank you for your quote request with Venkat Express. We have received your inquiry with the following details:
+Thank you for your quote request with ${storeName}. We have received your inquiry with the following details:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 QUOTE REQUEST DETAILS
@@ -244,19 +253,21 @@ We are reviewing your request and will provide you with a detailed quote shortly
 
 If you have any questions or need to provide additional information, please feel free to reply to this email or contact us at:
 
-📞 Phone: +91 XXXXXXXXXX
-📧 Email: support@venkatexpress.com
+📞 Phone: ${contactPhone}
+📧 Email: ${contactEmail}
 🌐 Website: www.venkatexpress.com
 
 Best regards,
-Venkat Express Team
+${storeName} Team
 Your Reliable International Courier Partner`;
 
-    // Encode the subject and body for URL
+    // Encode parameters for Gmail URL
+    const encodedTo = encodeURIComponent(quote.email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
     
-    return `mailto:${quote.email}?subject=${encodedSubject}&body=${encodedBody}`;
+    // Gmail compose URL format: https://mail.google.com/mail/?view=cm&fs=1&to=EMAIL&su=SUBJECT&body=BODY
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&su=${encodedSubject}&body=${encodedBody}`;
   };
 
   // Format phone number for WhatsApp (international format without + or spaces)
@@ -291,18 +302,23 @@ Your Reliable International Courier Partner`;
     return formatted.length >= 10 && formatted.length <= 15;
   };
 
-  // Generate WhatsApp click-to-chat link
+  // Generate WhatsApp click-to-chat link with dynamic contact info
   const generateWhatsAppLink = (quote: QuoteRequest): string => {
     const formattedPhone = formatPhoneForWhatsApp(quote.phone);
     
+    // Use dynamic contact information from admin settings
+    const storeName = settings.storeName || 'Venkat Express';
+    const contactPhone = settings.contactPhone || '+91 XXXXXXXXXX';
+    const contactEmail = settings.contactEmail || 'support@venkatexpress.com';
+    
     // Create preset message template
-    const message = `*Venkat Express: Quote Update*
+    const message = `*${storeName}: Quote Update*
 
 Status: ${quote.status}
 
 Hello ${quote.firstName} ${quote.lastName},
 
-Thank you for choosing Venkat Express! This is regarding your quote request #${quote.id.substring(0, 8).toUpperCase()}.
+Thank you for choosing ${storeName}! This is regarding your quote request #${quote.id.substring(0, 8).toUpperCase()}.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 *QUOTE REQUEST DETAILS*
@@ -323,11 +339,11 @@ Our team is currently reviewing your request. You can track your quote status an
 If you have any questions or need to provide additional information, feel free to reply to this message!
 
 Best regards,
-*Venkat Express Team*
+*${storeName} Team*
 _Your Reliable International Courier Partner_
 
-📞 Phone: +91 XXXXXXXXXX
-📧 Email: support@venkatexpress.com
+📞 Phone: ${contactPhone}
+📧 Email: ${contactEmail}
 🌐 Website: www.venkatexpress.com`;
 
     // URL encode the message
@@ -472,9 +488,11 @@ _Your Reliable International Courier Partner_
                               asChild
                             >
                               <a 
-                                href={generateMailtoLink(quote)}
+                                href={generateGmailComposeLink(quote)}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="inline-flex items-center justify-center"
-                                title={`Send email to ${quote.email}`}
+                                title={`Send email to ${quote.email} via Gmail`}
                               >
                                 <Mail className="h-4 w-4" />
                               </a>
@@ -673,9 +691,13 @@ _Your Reliable International Courier Partner_
                     variant="outline"
                     asChild
                   >
-                    <a href={generateMailtoLink(selectedQuote)}>
+                    <a 
+                      href={generateGmailComposeLink(selectedQuote)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Mail className="h-4 w-4 mr-2" />
-                      Send Email
+                      Send Email via Gmail
                     </a>
                   </Button>
                   {isValidWhatsAppPhone(selectedQuote.phone) ? (

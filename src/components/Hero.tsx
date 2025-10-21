@@ -1,7 +1,10 @@
 import { HeroCard } from './HeroCard';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 export const Hero = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="container mx-auto px-4 lg:px-6 pt-2 pb-2">
       {/* Masonry Grid Layout */}
@@ -17,8 +20,8 @@ export const Hero = () => {
             className="h-[220px] w-full shrink-0 md:h-[280px]"
           >
             <HeroCard
-              title="Shop from India, we deliver to your doorstep"
-              linkText="Learn more"
+              title={t('hero.shopFromIndia')}
+              linkText={t('hero.learnMore')}
               linkUrl="/services"
               image="https://i.ibb.co/xq9sCMrW/IMG-20250919-183525.webp"
               textColor="text-white"
@@ -34,8 +37,8 @@ export const Hero = () => {
             className="h-[220px] w-full shrink-0 md:h-[460px]"
           >
             <HeroCard
-              title="Shop Top Categories: Food & Decor"
-              linkText="Shop All"
+              title={t('hero.shopTopCategories')}
+              linkText={t('hero.shopAll')}
               linkUrl="/products"
               image="https://artisanhd.com/wp-content/uploads/2017/06/Cluster4-Family.jpg"
               textColor="text-white"
@@ -52,8 +55,8 @@ export const Hero = () => {
             className="hidden md:block h-[220px] w-full shrink-0 md:h-[210px]"
           >
             <HeroCard
-              title="New: Authentic Mango Pickle"
-              linkText="Shop Now"
+              title={t('hero.newMangoPickle')}
+              linkText={t('hero.shopNow')}
               linkUrl="/products"
               image="https://images.pexels.com/photos/28645470/pexels-photo-28645470/free-photo-of-rustic-kitchen-scene-with-preserved-vegetables-in-jars.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
               textColor="text-white"
@@ -94,9 +97,9 @@ export const Hero = () => {
               className="h-[220px] w-full shrink-0 md:h-[290px]"
             >
               <HeroCard
-                title="Up to 30% Off"
+                title={t('hero.upToOff')}
                 tag=""
-                linkText="Shop now"
+                linkText={t('hero.shopNow')}
                  image="https://t3.ftcdn.net/jpg/01/05/94/58/360_F_105945852_XrwXKqIJAXkgz3fBFrXajFZ3nmPNmIo9.jpg"
                 linkUrl="/products"
                 bgColor="bg-accent/10"
@@ -129,8 +132,8 @@ export const Hero = () => {
               className="hidden md:block h-[220px] w-full shrink-0 md:col-span-2 md:h-[250px] md:mt-24"
             >
               <HeroCard
-                title="Can't find it? Let us source it for you."
-                buttonText="Make a Request"
+                title={t('hero.cantFindSource')}
+                buttonText={t('hero.makeRequest')}
                 buttonUrl="/services"
                 textColor="text-foreground"
                 useYellowGradient={true}
@@ -150,8 +153,8 @@ export const Hero = () => {
               className="h-[220px] w-full shrink-0 md:h-[250px]"
             >
               <HeroCard
-                title="Hot New Arrivals in Decor"
-                linkText="Shop now"
+                title={t('hero.hotNewArrivals')}
+                linkText={t('hero.shopNow')}
                 linkUrl="/products"
                 image="https://images.unsplash.com/photo-1497990571654-77aa8ec36038?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGJyYXNzfGVufDB8fDB8fHww"
                 textColor="text-white"
@@ -167,8 +170,8 @@ export const Hero = () => {
               className="h-[220px] w-full shrink-0 md:h-[250px]"
             >
               <HeroCard
-                title="New Artisan Collection"
-                linkText="Shop now"
+                title={t('hero.newArtisanCollection')}
+                linkText={t('hero.shopNow')}
                 linkUrl="/products"
                 image="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=800&q=80"
                 textColor="text-white"
@@ -184,9 +187,9 @@ export const Hero = () => {
               className="h-[220px] w-full shrink-0 md:flex-1"
             >
               <HeroCard
-                title="Authentic Indian Sweets, Delivered Fresh"
+                title={t('hero.indianSweets')}
                 tag=""
-                linkText="Shop now"
+                linkText={t('hero.shopNow')}
                 linkUrl="/products"
                 image="https://mithaicana.com/cdn/shop/files/collection-of-indian-sweet-boxes-and-gift-hampers.jpg?v=1715144138&width=1500"
                 textColor="text-white"
