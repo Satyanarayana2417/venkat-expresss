@@ -75,7 +75,7 @@ const ProductDetail = () => {
 
   const handleBuyNow = () => {
     handleAddToCart();
-    navigate('/checkout');
+    navigate('/cart');
   };
 
   if (loading) {
