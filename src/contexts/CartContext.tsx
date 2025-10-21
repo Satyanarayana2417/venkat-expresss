@@ -201,10 +201,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (newItem: Omit<CartItem, 'qty'>) => {
     setItems((prev) => {
+      // Find existing item by productId
       const existing = prev.find((item) => item.productId === newItem.productId);
       
       if (existing) {
-        toast.success('Updated quantity in cart');
+        // Item already exists, increment quantity
+        toast.success(`Quantity updated to ${existing.qty + 1}`);
         return prev.map((item) =>
           item.productId === newItem.productId
             ? { ...item, qty: item.qty + 1 }
@@ -212,6 +214,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         );
       }
       
+      // New item, add with quantity 1
       toast.success('Added to cart');
       return [...prev, { ...newItem, qty: 1 }];
     });
@@ -246,7 +249,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     console.log('🔒 Cart UI state cleared (logout)');
   };
 
-  const totalItems = items.reduce((sum, item) => sum + item.qty, 0);
+  // totalItems = number of unique products (not total quantity)
+  const totalItems = items.length;
   const subtotal = items.reduce((sum, item) => sum + item.priceINR * item.qty, 0);
 
   return (

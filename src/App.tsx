@@ -120,9 +120,9 @@ const Layout = () => {
           <Footer />
         </div>
       )}
-      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, and admin pages */}
+      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, product detail, and admin pages */}
       {!isAdminPage && (
-        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage) ? 'hidden md:block' : ''}>
+        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isProductDetailPage) ? 'hidden md:block' : ''}>
           <BottomNavbar />
         </div>
       )}

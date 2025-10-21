@@ -227,9 +227,9 @@ export const FeaturedProducts = () => {
   const { t } = useTranslation();
   
   return (
-    <section className="container mx-auto px-4 lg:px-6 pt-2 pb-6 space-y-12">
+    <section className="container mx-auto px-4 lg:px-6 pt-10 md:pt-6 pb-6 space-y-12">
       {/* First Row: Banner Left, Carousel Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-6">
         <div className="lg:col-span-6">
           <PromoBanner
             title={t('featuredProducts.elevateYourCooking')}
@@ -244,7 +244,7 @@ export const FeaturedProducts = () => {
       </div>
 
       {/* Second Row: Carousel Left, Banner Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-6">
         <div className="lg:col-span-6 order-2 lg:order-1">
           <ProductCarousel title={t('featuredProducts.handcraftedDecor')} category="Decorative" position="left" />
         </div>
