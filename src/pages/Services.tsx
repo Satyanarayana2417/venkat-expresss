@@ -889,7 +889,7 @@ const Services = () => {
                           {t('services.loginToGetQuote')}
                         </span>
                       ) : (
-                        t('services.getQuoteBtn')
+                        t('services.getQuote')
                       )}
                     </Button>
                   </div>

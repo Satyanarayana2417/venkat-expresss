@@ -8,4 +8,34 @@ import App from "./App.tsx";
 import "./index.css";
 import "./i18n/config";
 
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js')
+      .then((registration) => {
+        console.log('Service Worker registered successfully:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+
+// Handle PWA start - ensure app opens at home page when launched as standalone
+if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true) {
+  // Check if this is the initial PWA launch
+  const isPWALaunch = sessionStorage.getItem('pwa_launched') !== 'true';
+  
+  if (isPWALaunch) {
+    // Mark PWA as launched in this session
+    sessionStorage.setItem('pwa_launched', 'true');
+    
+    // If not on home page and this is a fresh PWA launch, redirect to home
+    if (window.location.pathname !== '/' && !window.location.pathname.startsWith('/product/')) {
+      window.location.href = '/';
+    }
+  }
+}
+
 createRoot(document.getElementById("root")!).render(<App />);

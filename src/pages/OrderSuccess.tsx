@@ -221,23 +221,21 @@ const OrderSuccess = () => {
       </motion.div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Left Column - Order Details */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Order Information Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <Card className="p-6">
-                <div className="flex items-center justify-between mb-4 gap-2">
-                  <h2 className="text-base md:text-xl font-bold text-gray-900 whitespace-nowrap">Order Details</h2>
-                  <Badge variant="outline" className="text-xs md:text-base font-semibold">
-                    {order.orderNumber}
-                  </Badge>
-                </div>
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Column 1 - Order Details */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Card className="p-6 h-full">
+              <div className="flex items-center justify-between mb-4 gap-2">
+                <h2 className="text-base md:text-xl font-bold text-gray-900 whitespace-nowrap">Order Details</h2>
+                <Badge variant="outline" className="text-xs md:text-base font-semibold">
+                  {order.orderNumber}
+                </Badge>
+              </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div className="flex items-start gap-3">
@@ -309,16 +307,10 @@ const OrderSuccess = () => {
                   ))}
                 </div>
               </Card>
-            </motion.div>
 
-            {/* Delivery Information */}
-            {order.shippingAddress && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <Card className="p-6">
+              {/* Delivery Information */}
+              {order.shippingAddress && (
+                <Card className="p-6 mt-6">
                   <div className="flex items-center gap-2 mb-4">
                     <MapPin className="h-5 w-5 text-primary" />
                     <h2 className="text-xl font-bold text-gray-900">Delivery Address</h2>
@@ -331,20 +323,17 @@ const OrderSuccess = () => {
                     <p className="text-gray-600">{order.shippingAddress.country}</p>
                   </div>
                 </Card>
-              </motion.div>
-            )}
-          </div>
+              )}
+            </motion.div>
 
-          {/* Right Column - Summary & Actions */}
-          <div className="space-y-6">
-            {/* Next Steps Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-            >
-              <Card className="p-6 bg-blue-50 border-blue-200">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">What's Next?</h2>
+          {/* Column 2 - What's Next */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <Card className="p-6 bg-blue-50 border-blue-200 h-full">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">What's Next?</h2>
                 
                 <div className="space-y-4">
                   <div className="flex gap-3">
@@ -394,13 +383,13 @@ const OrderSuccess = () => {
               </Card>
             </motion.div>
 
-            {/* Order Summary Card */}
+            {/* Column 3 - Order Summary */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
             >
-              <Card className="p-6">
+              <Card className="p-6 h-full">
                 <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <Receipt className="h-5 w-5" />
                   Order Summary
@@ -442,50 +431,69 @@ const OrderSuccess = () => {
                 </div>
               </Card>
             </motion.div>
-
-            {/* Action Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="space-y-3"
-            >
-              <Link to="/track-order" className="block">
-                <Button className="w-full" size="lg">
-                  <Truck className="h-5 w-5 mr-2" />
-                  Track Your Order
-                </Button>
-              </Link>
-
-              <Link to="/history" className="block">
-                <Button variant="outline" className="w-full" size="lg">
-                  <Package className="h-5 w-5 mr-2" />
-                  View Order History
-                </Button>
-              </Link>
-
-              <Link to="/" className="block">
-                <Button variant="ghost" className="w-full" size="lg">
-                  <ShoppingBag className="h-5 w-5 mr-2" />
-                  Continue Shopping
-                </Button>
-              </Link>
-            </motion.div>
-
-            {/* Help Card */}
-            <Card className="p-6 bg-gray-50">
-              <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                If you have any questions about your order, feel free to contact our support team.
-              </p>
-              <Link to="/services">
-                <Button variant="link" className="p-0 h-auto">
-                  Contact Support <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </Link>
-            </Card>
-          </div>
         </div>
+
+        {/* Action Buttons - Full Width Below */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+          >
+            <Link to="/track-order" className="block">
+              <Button className="w-full" size="lg">
+                <Truck className="h-5 w-5 mr-2" />
+                Track Your Order
+              </Button>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95 }}
+          >
+            <Link to="/history" className="block">
+              <Button variant="outline" className="w-full" size="lg">
+                <Package className="h-5 w-5 mr-2" />
+                View Order History
+              </Button>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+          >
+            <Link to="/" className="block">
+              <Button variant="ghost" className="w-full" size="lg">
+                <ShoppingBag className="h-5 w-5 mr-2" />
+                Continue Shopping
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Help Card - Full Width Below */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="mt-6"
+        >
+          <Card className="p-6 bg-gray-50">
+            <h3 className="font-semibold text-gray-900 mb-2">Need Help?</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              If you have any questions about your order, feel free to contact our support team.
+            </p>
+            <Link to="/services">
+              <Button variant="link" className="p-0 h-auto">
+                Contact Support <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
