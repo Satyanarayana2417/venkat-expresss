@@ -34,6 +34,7 @@ import TrackOrder from "./pages/TrackOrder";
 import ProhibitedItems from "./pages/ProhibitedItems";
 import AddressManagement from "./pages/AddressManagement";
 import AccountOrders from "./pages/AccountOrders";
+import AccountOrderDetails from "./pages/AccountOrderDetails";
 import AccountProfile from "./pages/AccountProfile";
 import AccountCards from "./pages/AccountCards";
 import AccountCoupons from "./pages/AccountCoupons";
@@ -45,6 +46,8 @@ import AccountPrivacy from "./pages/AccountPrivacy";
 import AccountReviews from "./pages/AccountReviews";
 import AccountQuestions from "./pages/AccountQuestions";
 import SearchResults from "./pages/SearchResults";
+import CancelOrder from "./pages/CancelOrder";
+import CancelOrderPending from "./pages/CancelOrderPending";
 import { AccountLayout } from "./components/AccountLayout";
 
 const queryClient = new QueryClient();
@@ -64,12 +67,13 @@ const Layout = () => {
   const isProhibitedPage = location.pathname === '/prohibited';
   const isSearchPage = location.pathname === '/search';
   const isProductDetailPage = location.pathname.startsWith('/product/');
+  const isCancelOrderPage = location.pathname.startsWith('/order/cancel');
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hide Header on mobile for cart, payment, order success, wishlist, profile, admin, food items, decorative items, products, product detail, services, search, and prohibited items pages */}
+      {/* Hide Header on mobile for cart, payment, order success, wishlist, profile, admin, food items, decorative items, products, product detail, services, search, prohibited items, and cancel order pages */}
       {!isAdminPage && (
-        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isServicesPage || isProhibitedPage || isSearchPage) ? 'absolute -top-[9999px] md:relative md:top-0' : ''}>
+        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isServicesPage || isProhibitedPage || isSearchPage || isCancelOrderPage) ? 'absolute -top-[9999px] md:relative md:top-0' : ''}>
           <Header />
         </div>
       )}
@@ -93,6 +97,7 @@ const Layout = () => {
           <Route path="/home" element={<ProtectedRoute><AccountLayout><Dashboard /></AccountLayout></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><AccountLayout><Dashboard /></AccountLayout></ProtectedRoute>} />
           <Route path="/account/orders" element={<ProtectedRoute><AccountLayout><AccountOrders /></AccountLayout></ProtectedRoute>} />
+          <Route path="/account/order-details/:orderId" element={<ProtectedRoute><AccountOrderDetails /></ProtectedRoute>} />
           <Route path="/account/plus" element={<ProtectedRoute><AccountLayout><AccountPlus /></AccountLayout></ProtectedRoute>} />
           <Route path="/account/profile" element={<ProtectedRoute><AccountLayout><AccountProfile /></AccountLayout></ProtectedRoute>} />
           <Route path="/account/addresses" element={<ProtectedRoute><AccountLayout><AddressManagement /></AccountLayout></ProtectedRoute>} />
@@ -109,6 +114,8 @@ const Layout = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
           <Route path="/order/success/:orderId" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
+          <Route path="/order/cancel/:orderId" element={<ProtectedRoute><CancelOrder /></ProtectedRoute>} />
+          <Route path="/order/cancel/pending" element={<ProtectedRoute><CancelOrderPending /></ProtectedRoute>} />
           <Route path="/prohibited" element={<ProhibitedItems />} />
           <Route path="/track-order" element={<TrackOrder />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -116,13 +123,13 @@ const Layout = () => {
         </Routes>
       </main>
       {!isAdminPage && (
-        <div className={(isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isSearchPage) ? 'hidden md:block' : ''}>
+        <div className={(isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isSearchPage || isCancelOrderPage) ? 'hidden md:block' : ''}>
           <Footer />
         </div>
       )}
-      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, product detail, and admin pages */}
+      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, product detail, cancel order, and admin pages */}
       {!isAdminPage && (
-        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isProductDetailPage) ? 'hidden md:block' : ''}>
+        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isProductDetailPage || isCancelOrderPage) ? 'hidden md:block' : ''}>
           <BottomNavbar />
         </div>
       )}

@@ -1,0 +1,106 @@
+// PASTE THIS IN FIREBASE CONSOLE → FIRESTORE → RULES
+// This is a SIMPLIFIED version that will allow order cancellation to work
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+
+      match /cart/{cartItemId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /wishlist/{productId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /addresses/{addressId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // History collection (per user)
+    match /history/{userId}/records/{recordId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Products collection
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
+    }
+
+    match /teamMembers/{memberId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /discounts/{discountId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /settings/global {
+      allow read, write: if isAdmin();
+    }
+
+    match /pageContent/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ============================================
+    // ORDERS - SIMPLIFIED FOR CANCELLATION TO WORK
+    // ============================================
+    match /orders/{orderId} {
+      // CREATE: Anyone authenticated can create
+      allow create: if request.auth != null && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // READ: Order owner or admin
+      allow get: if request.auth != null && 
+                   (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // LIST: Order owner sees their own, admin sees all
+      allow list: if request.auth != null && 
+                    (request.auth.uid == resource.data.userId || isAdmin());
+      
+      // UPDATE: SIMPLIFIED - Owner can update their own orders, admin can update any
+      // This allows cancellation to work without complex field checking
+      allow update: if request.auth != null && (
+        isAdmin() || 
+        request.auth.uid == resource.data.userId
+      );
+      
+      // DELETE: Only admins
+      allow delete: if isAdmin();
+    }
+    // ============================================
+
+    match /quote_requests/{requestId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow get: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list, update, delete: if isAdmin();
+    }
+
+    match /shipments/{shipmentId} {
+      allow get: if true;
+      allow list, create, update, delete: if false;
+    }
+    
+    match /deletionAudit/{auditId} {
+      allow create: if isAdmin();
+      allow read, update, delete: if false;
+    }
+  }
+}

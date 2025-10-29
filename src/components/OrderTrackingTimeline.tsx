@@ -1,4 +1,4 @@
-import { Check, Package, Loader, Truck, Home, Clock } from 'lucide-react';
+import { Check, Package, Loader, Truck, Home, Clock, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface OrderStage {
@@ -8,7 +8,7 @@ interface OrderStage {
 }
 
 interface OrderTrackingTimelineProps {
-  currentStatus: 'pending' | 'processing' | 'shipped' | 'out-for-delivery' | 'delivered' | 'cancelled' | 'returned';
+  currentStatus: 'pending' | 'processing' | 'shipped' | 'out-for-delivery' | 'delivered' | 'cancelled' | 'returned' | 'cancellation-pending' | 'Payment Verification Pending' | 'Pending Verification';
   className?: string;
   size?: 'sm' | 'md' | 'lg';
 }
@@ -49,6 +49,7 @@ const STATUS_PRIORITY = {
   'delivered': 4,
   'cancelled': -1,
   'returned': -1,
+  'cancellation-pending': 0, // Same as pending since it's a request state
 };
 
 export const OrderTrackingTimeline = ({ 
@@ -95,7 +96,7 @@ export const OrderTrackingTimeline = ({
               'bg-red-100 text-red-600',
               config.icon
             )}>
-              <Clock className="h-full w-full p-1.5" />
+              <XCircle className="h-full w-full p-1.5" />
             </div>
             <p className={cn('font-medium text-red-600', config.text)}>
               {isCancelled ? 'Order Cancelled' : 'Order Returned'}

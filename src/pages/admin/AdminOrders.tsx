@@ -5,33 +5,40 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Filter, RefreshCw } from 'lucide-react';
+import { Search, Filter, RefreshCw, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, deleteDoc, addDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { AdminOrderDetail } from './AdminOrderDetail';
+import { DeleteOrderModal } from '@/components/admin/DeleteOrderModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Order {
   id: string;
+  orderNumber: string;
   customer: string;
   email: string;
   total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'out-for-delivery' | 'delivered' | 'cancelled' | 'returned' | 'cancellation-pending';
   date: string;
   items: number;
   createdAt?: any;
 }
 
-const statusConfig = {
+const statusConfig: Record<string, { label: string; color: string }> = {
   pending: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
   processing: { label: 'Processing', color: 'bg-blue-100 text-blue-800 border-blue-200' },
   shipped: { label: 'Shipped', color: 'bg-purple-100 text-purple-800 border-purple-200' },
+  'out-for-delivery': { label: 'Out for Delivery', color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
   delivered: { label: 'Delivered', color: 'bg-green-100 text-green-800 border-green-200' },
   cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-800 border-red-200' },
+  returned: { label: 'Returned', color: 'bg-orange-100 text-orange-800 border-orange-200' },
+  'cancellation-pending': { label: 'Cancellation Pending', color: 'bg-amber-100 text-amber-800 border-amber-200' },
 };
 
 export const AdminOrders = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -39,6 +46,8 @@ export const AdminOrders = () => {
   const [totalOrderCount, setTotalOrderCount] = useState(0);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<{ id: string; orderNumber: string; customer: string } | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Real-time listener for orders
   useEffect(() => {
@@ -58,6 +67,7 @@ export const AdminOrders = () => {
           const data = doc.data();
           fetchedOrders.push({
             id: doc.id,
+            orderNumber: data.orderNumber || data.orderId || doc.id,
             customer: data.customer || data.customerName || 'Unknown',
             email: data.email || data.customerEmail || 'N/A',
             total: data.total || data.totalAmount || 0,
@@ -95,10 +105,88 @@ export const AdminOrders = () => {
     };
   }, []); // Empty dependency array - listener stays active while on page
 
+  // Handle Delete Order with Audit Trail
+  const handleDeleteOrder = async (deletionReason: string) => {
+    if (!orderToDelete || !user) {
+      toast.error('Unable to delete order. Please try again.');
+      return;
+    }
+
+    try {
+      // Step 1: Fetch the complete order data before deletion
+      const orderRef = doc(db, 'orders', orderToDelete.id);
+      const orderSnapshot = await getDoc(orderRef);
+      
+      if (!orderSnapshot.exists()) {
+        toast.error('Order not found');
+        return;
+      }
+
+      const orderData = orderSnapshot.data();
+
+      // Step 2: Create audit log FIRST (before deletion)
+      const auditRef = collection(db, 'deletionAudit');
+      await addDoc(auditRef, {
+        orderId: orderToDelete.id,
+        orderNumber: orderToDelete.orderNumber,
+        customerName: orderToDelete.customer,
+        customerEmail: orderData.email || orderData.customerEmail || 'N/A',
+        orderTotal: orderData.total || orderData.totalAmount || 0,
+        orderStatus: orderData.status || 'unknown',
+        orderDate: orderData.date || orderData.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        deletedByUid: user.uid,
+        deletedByEmail: user.email || 'N/A',
+        deletionTimestamp: serverTimestamp(),
+        deletionReason: deletionReason,
+        orderDataSnapshot: orderData, // Store complete order data for reference
+      });
+
+      console.log('[DeleteOrder] Audit log created successfully');
+
+      // Step 3: Delete the order from orders collection
+      await deleteDoc(orderRef);
+
+      console.log('[DeleteOrder] Order deleted successfully');
+
+      toast.success('Order deleted successfully', {
+        description: `Order ${orderToDelete.orderNumber} has been permanently removed and logged in the audit trail.`,
+        duration: 5000,
+      });
+
+      // Reset state
+      setOrderToDelete(null);
+      setIsDeleteModalOpen(false);
+    } catch (error: any) {
+      console.error('[DeleteOrder] Error:', error);
+      
+      if (error.code === 'permission-denied') {
+        toast.error('Permission denied', {
+          description: 'You do not have permission to delete orders. Please contact the system administrator.',
+        });
+      } else {
+        toast.error('Failed to delete order', {
+          description: error.message || 'An unexpected error occurred. Please try again.',
+        });
+      }
+      
+      throw error; // Re-throw to prevent modal from closing
+    }
+  };
+
+  // Open delete confirmation modal
+  const openDeleteModal = (order: Order) => {
+    setOrderToDelete({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      customer: order.customer
+    });
+    setIsDeleteModalOpen(true);
+  };
+
   // Filter orders based on search and status
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.email.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -155,8 +243,11 @@ export const AdminOrders = () => {
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="processing">Processing</SelectItem>
                   <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="out-for-delivery">Out for Delivery</SelectItem>
                   <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancellation-pending">Cancellation Pending</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="returned">Returned</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -198,7 +289,7 @@ export const AdminOrders = () => {
                     {filteredOrders.length > 0 ? (
                       filteredOrders.map((order) => (
                         <TableRow key={order.id} className="hover:bg-gray-50">
-                          <TableCell className="font-medium">{order.id}</TableCell>
+                          <TableCell className="font-medium">{order.orderNumber}</TableCell>
                           <TableCell>
                             <div>
                               <div className="font-medium">{order.customer}</div>
@@ -209,9 +300,9 @@ export const AdminOrders = () => {
                           <TableCell>
                             <Badge 
                               variant="outline" 
-                              className={statusConfig[order.status].color}
+                              className={statusConfig[order.status]?.color || 'bg-gray-100 text-gray-800 border-gray-200'}
                             >
-                              {statusConfig[order.status].label}
+                              {statusConfig[order.status]?.label || order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-gray-600">
@@ -225,16 +316,27 @@ export const AdminOrders = () => {
                             ₹{order.total.toLocaleString('en-IN')}
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedOrderId(order.id);
-                                setIsDetailOpen(true);
-                              }}
-                            >
-                              Manage Tracking
-                            </Button>
+                            <div className="flex items-center justify-end gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedOrderId(order.id);
+                                  setIsDetailOpen(true);
+                                }}
+                              >
+                                Manage Tracking
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => openDeleteModal(order)}
+                                className="bg-red-600 hover:bg-red-700"
+                                title="Delete Order"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
@@ -264,6 +366,20 @@ export const AdminOrders = () => {
               setIsDetailOpen(false);
               setSelectedOrderId(null);
             }}
+          />
+        )}
+
+        {/* Delete Order Confirmation Modal */}
+        {orderToDelete && (
+          <DeleteOrderModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setOrderToDelete(null);
+            }}
+            onConfirm={handleDeleteOrder}
+            orderNumber={orderToDelete.orderNumber}
+            customerName={orderToDelete.customer}
           />
         )}
       </div>

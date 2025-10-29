@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { doc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, MapPin, Clock, X, CreditCard, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import { Plus, MapPin, Clock, X, CreditCard, Image as ImageIcon, ExternalLink, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
 interface TrackingEvent {
   status: string;
@@ -31,6 +31,7 @@ export const AdminOrderDetail = ({ orderId, isOpen, onClose }: OrderDetailProps)
   const [newStatus, setNewStatus] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [processingCancellation, setProcessingCancellation] = useState(false);
 
   useEffect(() => {
     if (isOpen && orderId) {
@@ -65,7 +66,7 @@ export const AdminOrderDetail = ({ orderId, isOpen, onClose }: OrderDetailProps)
       const newEvent: TrackingEvent = {
         status: newStatus,
         location: location,
-        timestamp: serverTimestamp(),
+        timestamp: Timestamp.now(), // Use Timestamp.now() instead of serverTimestamp()
         description: description || undefined,
       };
 
@@ -92,6 +93,72 @@ export const AdminOrderDetail = ({ orderId, isOpen, onClose }: OrderDetailProps)
     }
   };
 
+  const handleApproveCancellation = async () => {
+    if (!order) return;
+
+    setProcessingCancellation(true);
+    try {
+      const orderRef = doc(db, 'orders', orderId);
+      
+      // Get current tracking history
+      const currentTracking = order?.trackingHistory || [];
+      
+      // Create cancellation tracking event
+      const cancellationEvent = {
+        status: 'cancelled',
+        location: order.deliveryAddress?.city || 'N/A',
+        timestamp: Timestamp.now(),
+        description: 'Order cancelled as per customer request',
+      };
+      
+      await updateDoc(orderRef, {
+        status: 'cancelled',
+        cancellationApprovedAt: Timestamp.now(),
+        cancellationApprovedBy: 'admin',
+        trackingHistory: [...currentTracking, cancellationEvent],
+      });
+
+      toast.success('Cancellation approved', {
+        description: 'Order has been cancelled successfully',
+      });
+
+      await fetchOrderDetails();
+    } catch (error) {
+      console.error('Error approving cancellation:', error);
+      toast.error('Failed to approve cancellation');
+    } finally {
+      setProcessingCancellation(false);
+    }
+  };
+
+  const handleRejectCancellation = async () => {
+    if (!order) return;
+
+    setProcessingCancellation(true);
+    try {
+      const orderRef = doc(db, 'orders', orderId);
+      const previousStatus = order.previousStatus || 'processing';
+      
+      await updateDoc(orderRef, {
+        status: previousStatus,
+        cancellationRejectedAt: Timestamp.now(),
+        cancellationRejectedBy: 'admin',
+        cancellationReason: null, // Clear the cancellation reason
+      });
+
+      toast.success('Cancellation rejected', {
+        description: `Order status restored to ${previousStatus}`,
+      });
+
+      await fetchOrderDetails();
+    } catch (error) {
+      console.error('Error rejecting cancellation:', error);
+      toast.error('Failed to reject cancellation');
+    } finally {
+      setProcessingCancellation(false);
+    }
+  };
+
   const statusOptions = [
     { value: 'pending', label: 'Order Placed' },
     { value: 'processing', label: 'Processing' },
@@ -112,6 +179,76 @@ export const AdminOrderDetail = ({ orderId, isOpen, onClose }: OrderDetailProps)
 
         {order && (
           <div className="space-y-6 py-4">
+            {/* Cancellation Request - Show if status is cancellation-pending */}
+            {order.status === 'cancellation-pending' && (
+              <Card className="border-2 border-amber-300 bg-amber-50/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-amber-900">
+                    <AlertTriangle className="h-5 w-5" />
+                    Cancellation Request Pending
+                  </CardTitle>
+                  <CardDescription className="text-amber-800">
+                    Customer has requested to cancel this order
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Cancellation Reason */}
+                  <div className="bg-white p-4 rounded-lg border border-amber-200">
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Reason for Cancellation
+                    </Label>
+                    <p className="text-sm text-gray-800">
+                      {order.cancellationReason || 'No reason provided'}
+                    </p>
+                    {order.cancellationRequestedAt && (
+                      <p className="text-xs text-gray-500 mt-2">
+                        Requested on: {new Date(order.cancellationRequestedAt.seconds * 1000).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleApproveCancellation}
+                      disabled={processingCancellation}
+                      className="flex-1 bg-red-600 hover:bg-red-700"
+                    >
+                      {processingCancellation ? (
+                        'Processing...'
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Approve Cancellation
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleRejectCancellation}
+                      disabled={processingCancellation}
+                      variant="outline"
+                      className="flex-1 border-green-600 text-green-700 hover:bg-green-50"
+                    >
+                      {processingCancellation ? (
+                        'Processing...'
+                      ) : (
+                        <>
+                          <XCircle className="h-4 w-4 mr-2" />
+                          Reject & Resume Order
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-xs text-blue-800">
+                      <strong>Note:</strong> Approving will change status to "Cancelled". Rejecting will restore the previous status and allow the order to continue.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Current Status */}
             <Card>
               <CardHeader>

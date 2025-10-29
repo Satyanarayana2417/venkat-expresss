@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { collection, query, orderBy, getDocs, where, DocumentData } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, where, DocumentData, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { Package, Clock, CheckCircle, XCircle, Truck, Loader2, Search, ChevronRight } from 'lucide-react';
@@ -13,7 +13,7 @@ interface Order {
   orderNumber: string;
   items: any[];
   totalAmount: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned' | 'cancellation-pending';
   createdAt: Date;
   deliveryAddress?: any;
   sharedBy?: string;
@@ -60,117 +60,157 @@ const AccountOrders = () => {
       return;
     }
 
-    console.log('User authenticated, fetching orders');
-    fetchOrders();
-  }, [user, authLoading, navigate]);
-
-  const fetchOrders = async () => {
-    if (!user) return;
-
+    console.log('User authenticated, setting up real-time orders listener');
+    
+    // Set up real-time listener for orders
+    setLoading(true);
+    setError(null);
+    
+    const ordersRef = collection(db, 'orders');
+    let unsubscribe: (() => void) | undefined;
+    
     try {
-      setLoading(true);
-      setError(null);
-      console.log('Fetching orders for user:', user.uid);
-      
-      const ordersRef = collection(db, 'orders');
-      
       // Try with composite query first
-      let q;
-      try {
-        q = query(
-          ordersRef,
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc')
-        );
-        const snapshot = await getDocs(q);
-        console.log('Orders fetched successfully:', snapshot.size);
-
-        const ordersData: Order[] = snapshot.docs.map(doc => {
-          const data = doc.data() as DocumentData;
-          console.log('Order data:', doc.id, data);
+      const q = query(
+        ordersRef,
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+      
+      // Set up real-time listener with onSnapshot
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          console.log('[AccountOrders] Real-time update received:', snapshot.size, 'orders');
           
-          // Sanitize items to ensure they have proper structure
-          const sanitizedItems = (data.items || []).map((item: any) => ({
-            name: item.name || item.title || 'Product',
-            image: item.image || item.imageUrl || item.img,
-            price: item.price || item.totalPrice || item.amount || 0,
-            color: item.color || item.variant,
-            quantity: item.quantity || 1
-          }));
-          
-          return {
-            id: doc.id,
-            orderNumber: data.orderNumber || doc.id.slice(0, 8).toUpperCase(),
-            items: sanitizedItems,
-            totalAmount: data.totalAmount || data.total || 0,
-            status: data.status || 'pending',
-            createdAt: data.createdAt?.toDate() || new Date(),
-            deliveryAddress: data.deliveryAddress,
-            sharedBy: data.sharedBy
-          };
-        });
-
-        setOrders(ordersData);
-        setError(null);
-        
-        if (ordersData.length === 0) {
-          console.log('No orders found for user');
-        }
-      } catch (indexError: any) {
-        console.error('Composite index error, trying simpler query:', indexError);
-        
-        // If composite index doesn't exist, use simple query and sort in memory
-        const simpleQuery = query(ordersRef, where('userId', '==', user.uid));
-        const snapshot = await getDocs(simpleQuery);
-        console.log('Orders fetched with simple query:', snapshot.size);
-
-        const ordersData: Order[] = snapshot.docs.map(doc => {
-          const data = doc.data() as DocumentData;
-          
-          // Sanitize items to ensure they have proper structure
-          const sanitizedItems = (data.items || []).map((item: any) => ({
-            name: item.name || item.title || 'Product',
-            image: item.image || item.imageUrl || item.img,
-            price: item.price || item.totalPrice || item.amount || 0,
-            color: item.color || item.variant,
-            quantity: item.quantity || 1
-          }));
-          
-          return {
-            id: doc.id,
-            orderNumber: data.orderNumber || doc.id.slice(0, 8).toUpperCase(),
-            items: sanitizedItems,
-            totalAmount: data.totalAmount || data.total || 0,
-            status: data.status || 'pending',
-            createdAt: data.createdAt?.toDate() || new Date(),
-            deliveryAddress: data.deliveryAddress,
-            sharedBy: data.sharedBy
-          };
-        });
-
-        // Sort in memory by createdAt descending
-        ordersData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-
-        setOrders(ordersData);
-        setError(null);
-        
-        // Show toast with index creation hint
-        if (indexError.code === 'failed-precondition') {
-          toast.warning('Using fallback query. Consider creating a Firestore composite index for better performance.', {
-            description: 'Click the link in the console to create the index.'
+          const ordersData: Order[] = snapshot.docs.map(doc => {
+            const data = doc.data() as DocumentData;
+            
+            // Sanitize items to ensure they have proper structure
+            const sanitizedItems = (data.items || []).map((item: any) => ({
+              name: item.name || item.title || 'Product',
+              image: item.image || item.imageUrl || item.img,
+              price: item.price || item.totalPrice || item.amount || 0,
+              color: item.color || item.variant,
+              quantity: item.quantity || 1
+            }));
+            
+            return {
+              id: doc.id,
+              orderNumber: data.orderNumber || doc.id.slice(0, 8).toUpperCase(),
+              items: sanitizedItems,
+              totalAmount: data.totalAmount || data.total || 0,
+              status: data.status || data.orderStatus || 'pending',
+              createdAt: data.createdAt?.toDate() || new Date(),
+              deliveryAddress: data.deliveryAddress,
+              sharedBy: data.sharedBy
+            };
           });
+
+          setOrders(ordersData);
+          setError(null);
+          setLoading(false);
+          
+          if (ordersData.length === 0) {
+            console.log('No orders found for user');
+          }
+          
+          // Log deletions for debugging
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'removed') {
+              console.log('[AccountOrders] Order removed:', change.doc.id);
+            }
+          });
+        },
+        (error) => {
+          console.error('[AccountOrders] Error in real-time listener:', error);
+          
+          // Fallback to simple query if composite index doesn't exist
+          if (error.code === 'failed-precondition') {
+            console.log('[AccountOrders] Composite index not found, using simple query');
+            
+            const simpleQuery = query(ordersRef, where('userId', '==', user.uid));
+            
+            unsubscribe = onSnapshot(
+              simpleQuery,
+              (snapshot) => {
+                console.log('[AccountOrders] Real-time update (simple query):', snapshot.size, 'orders');
+                
+                const ordersData: Order[] = snapshot.docs.map(doc => {
+                  const data = doc.data() as DocumentData;
+                  
+                  // Sanitize items to ensure they have proper structure
+                  const sanitizedItems = (data.items || []).map((item: any) => ({
+                    name: item.name || item.title || 'Product',
+                    image: item.image || item.imageUrl || item.img,
+                    price: item.price || item.totalPrice || item.amount || 0,
+                    color: item.color || item.variant,
+                    quantity: item.quantity || 1
+                  }));
+                  
+                  return {
+                    id: doc.id,
+                    orderNumber: data.orderNumber || doc.id.slice(0, 8).toUpperCase(),
+                    items: sanitizedItems,
+                    totalAmount: data.totalAmount || data.total || 0,
+                    status: data.status || data.orderStatus || 'pending',
+                    createdAt: data.createdAt?.toDate() || new Date(),
+                    deliveryAddress: data.deliveryAddress,
+                    sharedBy: data.sharedBy
+                  };
+                });
+
+                // Sort in memory by createdAt descending
+                ordersData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+                setOrders(ordersData);
+                setError(null);
+                setLoading(false);
+                
+                // Log deletions for debugging
+                snapshot.docChanges().forEach((change) => {
+                  if (change.type === 'removed') {
+                    console.log('[AccountOrders] Order removed:', change.doc.id);
+                  }
+                });
+              },
+              (err) => {
+                console.error('[AccountOrders] Error in fallback listener:', err);
+                const errorMessage = err.message || 'Unknown error';
+                setError(errorMessage);
+                toast.error('Failed to load orders: ' + errorMessage);
+                setOrders([]);
+                setLoading(false);
+              }
+            );
+            
+            toast.warning('Using fallback query. Consider creating a Firestore composite index for better performance.');
+          } else {
+            const errorMessage = error.message || 'Unknown error';
+            setError(errorMessage);
+            toast.error('Failed to load orders: ' + errorMessage);
+            setOrders([]);
+            setLoading(false);
+          }
         }
-      }
+      );
     } catch (error: any) {
-      console.error('Error fetching orders:', error);
+      console.error('[AccountOrders] Error setting up listener:', error);
       const errorMessage = error.message || 'Unknown error';
       setError(errorMessage);
       toast.error('Failed to load orders: ' + errorMessage);
-      setOrders([]); // Set empty array on error
-    } finally {
+      setOrders([]);
       setLoading(false);
     }
-  };
+    
+    // Cleanup: Unsubscribe from listener when component unmounts or user changes
+    return () => {
+      if (unsubscribe) {
+        console.log('[AccountOrders] Cleaning up real-time listener');
+        unsubscribe();
+      }
+    };
+  }, [user, authLoading, navigate]);
 
   const handleStatusFilterChange = (filter: keyof typeof statusFilters) => {
     setStatusFilters(prev => ({ ...prev, [filter]: !prev[filter] }));
@@ -301,13 +341,8 @@ const AccountOrders = () => {
         <div className="flex flex-col items-center justify-center py-12">
           <XCircle className="h-16 w-16 text-red-500 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to Load Orders</h3>
-          <p className="text-gray-600 mb-6 text-center max-w-md">{error}</p>
-          <button
-            onClick={fetchOrders}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Try Again
-          </button>
+          <p className="text-gray-600 text-center max-w-md">{error}</p>
+          <p className="text-sm text-gray-500 mt-2">The connection will retry automatically.</p>
         </div>
       </div>
     );

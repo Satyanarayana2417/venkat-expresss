@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { doc, onSnapshot, DocumentData } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -40,6 +40,14 @@ export const useOrderRealtime = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  
+  // Use ref to store the latest onUpdate callback without triggering re-subscription
+  const onUpdateRef = useRef(onUpdate);
+  
+  // Update ref when onUpdate changes
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   useEffect(() => {
     // Don't set up listener if disabled or no orderId
@@ -53,11 +61,18 @@ export const useOrderRealtime = ({
     const setupListener = () => {
       try {
         const orderRef = doc(db, 'orders', orderId);
+        
+        console.log(`[useOrderRealtime] Setting up listener for order: ${orderId}`);
 
         // Set up real-time listener with onSnapshot
         unsubscribe = onSnapshot(
           orderRef,
           (docSnapshot) => {
+            console.log(`[useOrderRealtime] Snapshot received for order: ${orderId}`, {
+              exists: docSnapshot.exists(),
+              status: docSnapshot.data()?.status
+            });
+            
             if (docSnapshot.exists()) {
               const docData = docSnapshot.data() as DocumentData;
               
@@ -68,22 +83,26 @@ export const useOrderRealtime = ({
                 lastUpdated: new Date(),
               };
 
+              console.log(`[useOrderRealtime] Order data updated:`, orderData.status);
+              
               setData(orderData);
               setIsConnected(true);
               setError(null);
               
-              // Call optional update callback
-              if (onUpdate) {
-                onUpdate(orderData);
+              // Call optional update callback using ref
+              if (onUpdateRef.current) {
+                console.log(`[useOrderRealtime] Calling onUpdate callback`);
+                onUpdateRef.current(orderData);
               }
             } else {
+              console.warn(`[useOrderRealtime] Order not found: ${orderId}`);
               setError('Order not found');
               setIsConnected(false);
             }
             setLoading(false);
           },
           (err) => {
-            console.error('Error in order real-time listener:', err);
+            console.error(`[useOrderRealtime] Error in listener for order ${orderId}:`, err);
             setError(err.message);
             setIsConnected(false);
             setLoading(false);
@@ -101,11 +120,12 @@ export const useOrderRealtime = ({
     // Cleanup: Unsubscribe from listener when component unmounts or orderId changes
     return () => {
       if (unsubscribe) {
+        console.log(`[useOrderRealtime] Cleaning up listener for order: ${orderId}`);
         unsubscribe();
         setIsConnected(false);
       }
     };
-  }, [orderId, enabled, onUpdate]);
+  }, [orderId, enabled]); // Removed onUpdate from dependencies
 
   return {
     data,

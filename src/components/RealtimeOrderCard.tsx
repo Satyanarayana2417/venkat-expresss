@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useOrderRealtime } from '@/hooks/useOrderRealtime';
-import { OrderTrackingTimeline } from './OrderTrackingTimeline';
-import { TrackingHistoryDetails } from './TrackingHistoryDetails';
 import { toast } from 'sonner';
 
 interface OrderCardItem {
@@ -38,9 +37,15 @@ export const RealtimeOrderCard = ({
   className,
   isMobile = false,
 }: RealtimeOrderCardProps) => {
+  const navigate = useNavigate();
   const [currentStatus, setCurrentStatus] = useState(initialStatus);
   const [trackingHistory, setTrackingHistory] = useState<any[]>([]);
   const [showUpdateIndicator, setShowUpdateIndicator] = useState(false);
+
+  // Navigate to order details page
+  const handleViewDetails = () => {
+    navigate(`/account/order-details/${orderId}`);
+  };
 
   // Set up real-time listener for this specific order
   const { data: realtimeData, isConnected, error } = useOrderRealtime({
@@ -110,19 +115,9 @@ export const RealtimeOrderCard = ({
 
   return (
     <div className={cn('relative', className)}>
-      {/* Real-time Connection Indicator */}
-      {isConnected && !error && (
-        <div className="absolute top-2 right-2 z-10">
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 border border-green-200 rounded-full">
-            <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] font-medium text-green-700">Live</span>
-          </div>
-        </div>
-      )}
-
       {/* Update Indicator */}
       {showUpdateIndicator && (
-        <div className="absolute top-2 right-20 z-10 animate-bounce">
+        <div className="absolute top-2 right-2 z-10 animate-bounce">
           <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 border border-blue-200 rounded-full">
             <RefreshCw className="h-3 w-3 text-blue-600 animate-spin" />
             <span className="text-[10px] font-medium text-blue-700">Updated!</span>
@@ -139,12 +134,14 @@ export const RealtimeOrderCard = ({
         </div>
       )}
 
-      {/* Order Card */}
-      <div
+      {/* Order Card - Clickable */}
+      <button
+        onClick={handleViewDetails}
         className={cn(
-          'border border-gray-200 bg-white',
+          'w-full text-left border border-gray-200 bg-white cursor-pointer',
           sharedBy ? 'rounded-b-lg border-t-0' : 'rounded-lg',
-          !isMobile && 'hover:shadow-md transition-shadow'
+          'hover:shadow-lg hover:border-blue-300 transition-all duration-200',
+          'active:scale-[0.99]'
         )}
       >
         {/* Order Items */}
@@ -230,22 +227,7 @@ export const RealtimeOrderCard = ({
             </span>
           </div>
         )}
-
-        {/* Real-Time Tracking Timeline */}
-        {currentStatus !== 'cancelled' && currentStatus !== 'returned' && (
-          <div className="px-4 py-2 border-t border-gray-200 bg-gray-50/30">
-            <OrderTrackingTimeline
-              currentStatus={currentStatus}
-              size={isMobile ? 'sm' : 'md'}
-            />
-          </div>
-        )}
-
-        {/* Tracking History Details */}
-        {trackingHistory.length > 0 && (
-          <TrackingHistoryDetails trackingHistory={trackingHistory} />
-        )}
-      </div>
+      </button>
     </div>
   );
 };

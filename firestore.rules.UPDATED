@@ -1,0 +1,134 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Helper function to check if user is the order owner
+    function isOrderOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // A user can create & read their own document
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+
+      // == NEW RULE FOR PRIVATE CART START HERE ==
+      match /cart/{cartItemId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+      // == NEW RULE FOR PRIVATE CART END HERE ==
+
+      // == NEW RULE FOR PRIVATE WISHLIST START HERE ==
+      match /wishlist/{productId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+      // == NEW RULE FOR PRIVATE WISHLIST END HERE ==
+
+      // == NEW RULE FOR SAVED ADDRESSES START HERE ==
+      match /addresses/{addressId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      }
+      // == NEW RULE FOR SAVED ADDRESSES END HERE ==
+    }
+
+    // History collection (per user)
+    match /history/{userId}/records/{recordId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Products collection
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
+    }
+
+    // == NEW RULE FOR TEAM MEMBERS START HERE ==
+    match /teamMembers/{memberId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    // == NEW RULE FOR TEAM MEMBERS END HERE ==
+    
+    // == NEW RULE FOR DISCOUNTS & COUPONS ==
+    match /discounts/{discountId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // == NEW RULE FOR SETTINGS ==
+    match /settings/global {
+      allow read, write: if isAdmin();
+    }
+
+    // == NEW RULE FOR PAGE CONTENT START HERE ==
+    match /pageContent/{pageId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    // == NEW RULE FOR PAGE CONTENT END HERE ==
+
+    // == UPDATED RULES FOR ORDER MANAGEMENT WITH CANCELLATION SUPPORT ==
+    match /orders/{orderId} {
+      // CREATE: Allow authenticated users to create orders for themselves
+      allow create: if request.auth != null && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // READ (GET): Allow order owner or admin to read individual order
+      allow get: if request.auth != null && 
+                   (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // READ (LIST): Allow users to list only their own orders, admins can list all
+      allow list: if request.auth != null && 
+                    (request.auth.uid == resource.data.userId || isAdmin());
+      
+      // UPDATE: Allow in two scenarios:
+      // 1. Admin can update anything
+      // 2. Order owner can update ONLY for cancellation (status to 'cancellation-pending')
+      allow update: if request.auth != null && (
+        isAdmin() || 
+        (
+          isOrderOwner(resource.data.userId) && 
+          request.resource.data.status == 'cancellation-pending' &&
+          resource.data.userId == request.resource.data.userId
+        )
+      );
+      
+      // DELETE: Only admins can delete (creates audit log)
+      allow delete: if isAdmin();
+    }
+    // == END OF UPDATED ORDERS SECTION ==
+
+    // == QUOTE REQUEST RULE (UPDATED FOR TIMELINE) START HERE ==
+    match /quote_requests/{requestId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow get: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list, update, delete: if isAdmin();
+    }
+    // == QUOTE REQUEST RULE (UPDATED FOR TIMELINE) END HERE ==
+
+    // == NEW PUBLIC SHIPMENT TRACKING RULE START HERE ==
+    match /shipments/{shipmentId} {
+      allow get: if true;
+      allow list, create, update, delete: if false;
+    }
+    // == NEW PUBLIC SHIPMENT TRACKING RULE END HERE ==
+    
+    // == NEW RULE FOR DELETION AUDIT START HERE ==
+    match /deletionAudit/{auditId} {
+      // 1. CREATE: Only allows an admin to create a log entry (when they delete an order).
+      allow create: if isAdmin();
+      
+      // 2. DENY ALL OTHER ACCESS: Prevents anyone from reading or tampering with the log.
+      allow read, update, delete: if false;
+    }
+    // == NEW RULE FOR DELETION AUDIT END HERE ==
+  }
+}
