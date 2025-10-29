@@ -101,6 +101,24 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-sans antialiased;
     /* Hide scrollbar globally */
     overflow-x: hidden;
+    /* Chrome mobile fixes */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent zoom on input focus in Chrome mobile */
+    touch-action: manipulation;
+  }
+
+  /* Chrome mobile rendering fixes */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Fix for Chrome mobile white screen */
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 
   /* Hide scrollbar for all elements */

@@ -12,14 +12,21 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/service-worker.js')
-      .then((registration) => {
-        console.log('Service Worker registered successfully:', registration.scope);
-      })
-      .catch((error) => {
-        console.log('Service Worker registration failed:', error);
-      });
+    // Use try-catch for Chrome mobile compatibility
+    try {
+      navigator.serviceWorker
+        .register('/service-worker.js', { scope: '/' })
+        .then((registration) => {
+          console.log('Service Worker registered successfully:', registration.scope);
+        })
+        .catch((error) => {
+          // Fail silently - don't block app initialization
+          console.log('Service Worker registration failed:', error);
+        });
+    } catch (error) {
+      // Chrome mobile might throw errors, catch them
+      console.log('Service Worker not supported or blocked:', error);
+    }
   });
 }
 

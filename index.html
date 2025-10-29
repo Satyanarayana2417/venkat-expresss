@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/venkat-logo.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
     <title>Venkat Express - Premium Global Shopping & Courier Service</title>
     <meta name="description" content="Venkat Express offers premium purchase-on-behalf and international courier services. Shop food and decorative items from India with reliable global shipping." />
     <meta name="author" content="Venkat Express" />
+    
+    <!-- Chrome Mobile Optimization -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
@@ -29,6 +32,15 @@
   </head>
 
   <body>
+    <noscript>
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
+        <div>
+          <h1 style="font-size: 24px; color: #2C4A6B; margin-bottom: 16px;">JavaScript Required</h1>
+          <p style="color: #666; margin-bottom: 16px;">Please enable JavaScript in your browser to use Venkat Express.</p>
+          <p style="color: #999; font-size: 14px;">This application requires JavaScript to function properly.</p>
+        </div>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

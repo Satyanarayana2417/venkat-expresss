@@ -4,10 +4,12 @@
   "description": "Premium purchase-on-behalf and international courier services from India",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#2C4A6B",
   "theme_color": "#2C4A6B",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "/",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon-192.png",
