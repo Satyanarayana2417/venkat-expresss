@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "./i18n/config";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
@@ -38,4 +39,14 @@ if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator
   }
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Root element not found. Please check your index.html file.");
+}
+
+createRoot(rootElement).render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
