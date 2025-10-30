@@ -173,7 +173,7 @@ All errors show clear, actionable messages in the overlay.
 ```tsx
 Location: Mobile header, top-right corner
 Color: White (#FFFFFF)
-Background: Blue (#1976D2)
+Background: Blue (#7B89C2)
 Active State: Pulsing animation
 ```
 

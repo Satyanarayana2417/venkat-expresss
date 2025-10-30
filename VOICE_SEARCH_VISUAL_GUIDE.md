@@ -11,7 +11,7 @@ This document provides detailed visual specifications for the voice search featu
 ### Location: Top Navigation Bar
 ```
 ┌─────────────────────────────────────────────────┐
-│  [Logo]  [Search: "search venkat express"]  [🎤] │  ← Blue Header (#1976D2)
+│  [Logo]  [Search: "search venkat express"]  [🎤] │  ← Blue Header (#7B89C2)
 └─────────────────────────────────────────────────┘
 ```
 
@@ -100,7 +100,7 @@ Visual feedback that mic is active
 **4. Microphone Icon with Rings:**
 - **Main Icon:**
   - Size: 64px × 64px (w-16 h-16)
-  - Background: Primary Blue (#1976D2)
+  - Background: Primary Blue (#7B89C2)
   - Icon: Mic (Lucide, 32px, white)
   - Border Radius: Full
   - Shadow: Large
@@ -230,7 +230,7 @@ transition: duration 0.3s
 ## 🎨 Color Palette
 
 ### Primary Colors:
-- **Primary Blue:** #1976D2 (Header background, mic icon)
+- **Primary Blue:** #7B89C2 (Header background, mic icon)
 - **Primary Dark:** #1565C0 (Border accents)
 
 ### Neutral Colors:
@@ -531,7 +531,7 @@ Backdrop Filter: blur(8px)
 
 ```css
 /* Colors */
---primary: #1976D2;
+--primary: #7B89C2;
 --primary-dark: #1565C0;
 --white: #FFFFFF;
 --gray-50: #F9FAFB;
@@ -580,7 +580,7 @@ Backdrop Filter: blur(8px)
 ## 🎯 Design System Alignment
 
 ### Matches Existing Design:
-- Same primary blue (#1976D2)
+- Same primary blue (#7B89C2)
 - Consistent rounded corners
 - Matching font sizes
 - Same spacing scale

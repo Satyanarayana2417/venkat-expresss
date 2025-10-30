@@ -270,7 +270,7 @@ The feature is **exclusively for mobile devices** (screens < 768px):
 className="... md:hidden"  // Hidden on tablet/desktop
 
 // Icon in mobile header
-<div className="md:hidden bg-[#1976D2]">  // Only in mobile section
+<div className="md:hidden bg-[#7B89C2]">  // Only in mobile section
 ```
 
 ### Why Mobile-Only?

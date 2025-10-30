@@ -461,9 +461,9 @@ export const Header = () => {
         </div>
 
         {/* Mobile Header - Compact Single Bar */}
-        <div className="md:hidden bg-[#7B89C2]">
+        <div className="md:hidden bg-[#1976D2]">
           {/* Top Bar - Logo, Search, Voice */}
-          <div className="bg-[#7B89C2]">
+          <div className="bg-[#1976D2]">
             <div className="container mx-auto px-3 py-2.5">
               <div className="flex items-center gap-2">
                 {/* Logo */}
@@ -506,7 +506,7 @@ export const Header = () => {
           </div>
 
           {/* Location & Pickup Row */}
-          <div className="bg-[#7B89C2] border-b border-[#6B79B2]">
+          <div className="bg-[#1976D2] border-b border-[#1565C0]">
             <div className="container mx-auto px-3 py-2.5">
               <div className="flex items-center justify-between text-sm">
                 {/* Pickup or Delivery */}
