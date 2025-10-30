@@ -1,14 +1,12 @@
+# Only ignore files not needed for build
 node_modules
-.git
 .env.local
 .env.*.local
 *.log
 .DS_Store
-src
-public
-*.md
-!README.md
 .vscode
 .idea
 coverage
 .nyc_output
+*.md
+!README.md
