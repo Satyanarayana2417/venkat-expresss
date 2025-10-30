@@ -15,8 +15,8 @@ const Home = () => {
       {/* Featured Products with Carousels */}
       <FeaturedProducts />
 
-      {/* Sourcing CTA Banner */}
-      <section className="container mx-auto px-4 lg:px-6 py-4">
+      {/* Sourcing CTA Banner - Desktop Only */}
+      <section className="hidden md:block container mx-auto px-4 lg:px-6 py-4">
         <div className="w-full bg-gradient-to-r from-yellow-50 via-yellow-100 to-yellow-50 rounded-lg shadow-sm border border-yellow-200 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[180px]">
           <div className="flex-1">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
@@ -39,6 +39,28 @@ const Home = () => {
 
       {/* Product Showcase - Categories and Featured Products */}
       <ProductShowcase />
+
+      {/* Sourcing CTA Banner - Mobile Only (After Flash Deals on Decor) */}
+      <section className="md:hidden container mx-auto px-4 lg:px-6 py-4">
+        <div className="w-full bg-gradient-to-r from-yellow-50 via-yellow-100 to-yellow-50 rounded-lg shadow-sm border border-yellow-200 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6 min-h-[180px]">
+          <div className="flex-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              {t('home.cantFind')}
+            </h2>
+            <p className="text-sm md:text-base text-gray-600">
+              {t('home.sourcingDescription')}
+            </p>
+          </div>
+          <Link to="/services">
+            <Button 
+              variant="outline" 
+              className="bg-transparent border-2 border-orange-500 text-orange-600 hover:bg-transparent hover:border-orange-600 hover:text-orange-700 font-semibold px-6 py-5 text-sm whitespace-nowrap transition-all duration-300"
+            >
+              {t('home.makeRequest')}
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {/* Services Overview */}
       <section className="bg-muted/50 py-16">

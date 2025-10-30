@@ -23,6 +23,7 @@ import AdminAuth from "./pages/AdminAuth";
 import Auth from "./pages/Auth";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Welcome from "./pages/Welcome";
 import Dashboard from "./pages/Dashboard";
 import History from "./pages/History";
 import Wishlist from "./pages/Wishlist";
@@ -68,11 +69,13 @@ const Layout = () => {
   const isSearchPage = location.pathname === '/search';
   const isProductDetailPage = location.pathname.startsWith('/product/');
   const isCancelOrderPage = location.pathname.startsWith('/order/cancel');
+  const isAuthPage = location.pathname === '/auth' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/welcome';
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hide Header on mobile for cart, payment, order success, wishlist, profile, admin, food items, decorative items, products, product detail, services, search, prohibited items, and cancel order pages */}
-      {!isAdminPage && (
+      {/* Hide Header on mobile for cart, payment, order success, wishlist, profile, admin, food items, decorative items, products, product detail, services, search, prohibited items, auth pages, and cancel order pages */}
+      {/* Hide Header on all screens (including desktop) for auth pages */}
+      {!isAdminPage && !isAuthPage && (
         <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isServicesPage || isProhibitedPage || isSearchPage || isCancelOrderPage) ? 'absolute -top-[9999px] md:relative md:top-0' : ''}>
           <Header />
         </div>
@@ -90,6 +93,7 @@ const Layout = () => {
           <Route path="/about" element={<About />} />
           <Route path="/admin-legacy" element={<Admin />} />
           <Route path="/admin/*" element={<AdminAuth />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -122,14 +126,14 @@ const Layout = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isAdminPage && (
+      {!isAdminPage && !isAuthPage && (
         <div className={(isFoodOrDecorativePage || isProductsPage || isProductDetailPage || isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isSearchPage || isCancelOrderPage) ? 'hidden md:block' : ''}>
           <Footer />
         </div>
       )}
-      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, product detail, cancel order, and admin pages */}
+      {/* Hide BottomNavbar on cart, payment, order success, wishlist, profile, product detail, auth pages, cancel order, and admin pages */}
       {!isAdminPage && (
-        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isProductDetailPage || isCancelOrderPage) ? 'hidden md:block' : ''}>
+        <div className={(isCartPage || isPaymentPage || isOrderSuccessPage || isWishlistPage || isProfilePage || isProductDetailPage || isCancelOrderPage || isAuthPage) ? 'hidden md:block' : ''}>
           <BottomNavbar />
         </div>
       )}

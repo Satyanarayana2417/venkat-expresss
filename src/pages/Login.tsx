@@ -3,9 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Loader2 } from 'lucide-react';
+import { Loader2, User, Lock } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -54,80 +52,94 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-muted/50 to-background">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 text-primary mb-4">
-            <Package className="h-10 w-10" />
-            <span className="font-heading font-bold text-2xl">Venkat Express</span>
-          </div>
-          <h1 className="font-heading text-3xl font-bold mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">Sign in to your account</p>
-        </div>
+    <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Decorative circles */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#2E3B6B] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[#7B89C2] rounded-full opacity-60 -translate-y-1/4 translate-x-1/3"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#2E3B6B] rounded-full translate-y-1/2 -translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#7B89C2] rounded-full opacity-60 translate-y-1/4 -translate-x-1/3"></div>
 
-        <Card className="shadow-premium-lg">
-          <form onSubmit={handleSubmit}>
-            <CardHeader>
-              <CardTitle>Login</CardTitle>
-              <CardDescription>Enter your credentials to access your account</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+      {/* Main Card Container */}
+      <div className="w-full max-w-md relative z-10">
+        <div className="bg-white rounded-3xl shadow-lg p-8 md:p-10">
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-gray-900 mb-8">SIGN IN</h1>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Input */}
+            <div>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
+                  type="text"
+                  placeholder="Email"
                   value={formData.email}
                   onChange={(e) => {
                     setFormData({ ...formData, email: e.target.value });
                     setErrors({ ...errors, email: undefined });
                   }}
-                  className={errors.email ? 'border-destructive' : ''}
+                  className="pl-10 pr-4 h-12 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#5B6B9E] focus:border-transparent"
                 />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
-                )}
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
-                  id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Password"
                   value={formData.password}
                   onChange={(e) => {
                     setFormData({ ...formData, password: e.target.value });
                     setErrors({ ...errors, password: undefined });
                   }}
-                  className={errors.password ? 'border-destructive' : ''}
+                  className="pl-10 pr-4 h-12 bg-white border border-gray-200 rounded-lg text-gray-400 placeholder:text-gray-300 focus:ring-2 focus:ring-[#5B6B9E] focus:border-transparent"
                 />
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password}</p>
-                )}
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              )}
+            </div>
 
-              <Button type="submit" className="w-full gradient-gold" disabled={loading}>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={loading || !formData.email || !formData.password}
+                className="w-full bg-[#2E3B6B] hover:bg-[#253152] text-white rounded-none h-12 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  'Sign In'
+                  'SIGN IN'
                 )}
               </Button>
+            </div>
 
-              <p className="text-center text-sm text-muted-foreground">
-                Don't have an account?{' '}
-                <Link to="/signup" className="text-primary hover:underline font-medium">
-                  Sign up
+            {/* Forget Password Link */}
+            <div className="text-center pt-2">
+              <Link to="/forgot-password" className="text-gray-400 text-sm hover:text-gray-600">
+                Forget Password?
+              </Link>
+            </div>
+
+            {/* Sign Up Link */}
+            <div className="text-center pt-4">
+              <p className="text-sm text-gray-500">
+                don't have an account?{' '}
+                <Link to="/signup" className="text-[#2E3B6B] font-bold hover:underline">
+                  SIGN UP
                 </Link>
               </p>
-            </CardContent>
+            </div>
           </form>
-        </Card>
+        </div>
       </div>
     </div>
   );

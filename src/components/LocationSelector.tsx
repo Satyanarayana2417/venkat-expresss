@@ -37,7 +37,11 @@ const countries = [
   { value: 'uae', label: 'UAE', states: ['Dubai', 'Abu Dhabi', 'Sharjah'], cities: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'] },
 ];
 
-export const LocationSelector = () => {
+interface LocationSelectorProps {
+  isMobileOnly?: boolean;
+}
+
+export const LocationSelector = ({ isMobileOnly = false }: LocationSelectorProps = {}) => {
   const [location, setLocation] = useState<LocationData>(getDefaultLocation());
   const [showDialog, setShowDialog] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState('india');
@@ -56,8 +60,10 @@ export const LocationSelector = () => {
     }
   }, []);
 
-  // Listen for open dialog event from mobile header
+  // Listen for open dialog event from mobile header (only for mobile instance)
   useEffect(() => {
+    if (!isMobileOnly) return; // Only mobile instance should listen to this event
+
     const handleOpenDialog = () => {
       setShowDialog(true);
     };
@@ -67,10 +73,12 @@ export const LocationSelector = () => {
     return () => {
       window.removeEventListener('openLocationDialog', handleOpenDialog);
     };
-  }, []);
+  }, [isMobileOnly]);
 
-  // Show permission dialog if not asked before
+  // Show permission dialog if not asked before (only for desktop instance)
   useEffect(() => {
+    if (isMobileOnly) return; // Only desktop instance should auto-show on first visit
+
     const checkPermission = async () => {
       if (hasAskedPermission()) {
         return;
@@ -99,7 +107,7 @@ export const LocationSelector = () => {
     };
 
     checkPermission();
-  }, []);
+  }, [isMobileOnly]);
 
   /**
    * Request and fetch user's current location using geolocation

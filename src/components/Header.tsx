@@ -260,7 +260,7 @@ export const Header = () => {
                     <span className="text-xs">{t('header.account')}</span>
                   </Link>
                 ) : !isTrackOrderPage && (
-                  <Link to="/auth" className="flex flex-col items-center gap-1 hover:text-primary transition-colors group">
+                  <Link to="/welcome" className="flex flex-col items-center gap-1 hover:text-primary transition-colors group">
                     <User className="h-5 w-5 group-hover:scale-110 transition-transform" />
                     <span className="text-xs">{t('header.signIn')}</span>
                   </Link>
@@ -402,7 +402,7 @@ export const Header = () => {
                     </Button>
                   </Link>
                 ) : (
-                  <Link to="/auth">
+                  <Link to="/welcome">
                     <Button variant="ghost" size="icon">
                       <User className="h-5 w-5" />
                     </Button>
@@ -461,9 +461,9 @@ export const Header = () => {
         </div>
 
         {/* Mobile Header - Compact Single Bar */}
-        <div className="md:hidden bg-[#1976D2]">
+        <div className="md:hidden bg-[#7B89C2]">
           {/* Top Bar - Logo, Search, Voice */}
-          <div className="bg-[#1976D2]">
+          <div className="bg-[#7B89C2]">
             <div className="container mx-auto px-3 py-2.5">
               <div className="flex items-center gap-2">
                 {/* Logo */}
@@ -506,7 +506,7 @@ export const Header = () => {
           </div>
 
           {/* Location & Pickup Row */}
-          <div className="bg-[#1976D2] border-b border-[#1565C0]">
+          <div className="bg-[#7B89C2] border-b border-[#6B79B2]">
             <div className="container mx-auto px-3 py-2.5">
               <div className="flex items-center justify-between text-sm">
                 {/* Pickup or Delivery */}
@@ -661,7 +661,7 @@ export const Header = () => {
                       </div>
                     ) : !isTrackOrderPage && (
                       <Link
-                        to="/auth"
+                        to="/welcome"
                         onClick={() => setShowMobileMenu(false)}
                         className="block mb-6 p-4 bg-primary text-white rounded-lg text-center font-medium hover:bg-primary-hover transition-colors"
                       >
@@ -756,7 +756,7 @@ export const Header = () => {
       
       {/* Hidden Location Selector for Mobile (triggered by event) */}
       <div className="md:hidden">
-        <LocationSelector />
+        <LocationSelector isMobileOnly={true} />
       </div>
     </>
   );

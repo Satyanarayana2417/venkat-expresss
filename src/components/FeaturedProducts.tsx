@@ -169,9 +169,10 @@ interface PromoBannerProps {
   image: string;
   buttonText: string;
   buttonLink: string;
+  customHeight?: string;
 }
 
-const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps) => {
+const PromoBanner = ({ title, image, buttonText, buttonLink, customHeight }: PromoBannerProps) => {
   const { t } = useTranslation();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -190,7 +191,7 @@ const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps)
   };
 
   return (
-    <div className="relative h-full min-h-[220px] rounded-xl overflow-hidden shadow-lg group bg-gray-200">
+    <div className={`relative h-full rounded-xl overflow-hidden shadow-lg group bg-gray-200 ${customHeight || 'min-h-[220px]'}`}>
       {/* Loading placeholder */}
       {!imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
@@ -209,12 +210,12 @@ const PromoBanner = ({ title, image, buttonText, buttonLink }: PromoBannerProps)
         crossOrigin="anonymous"
         referrerPolicy="no-referrer"
       />
-      <div className="absolute inset-0 flex flex-col justify-end p-8">
-        <h2 className="text-white text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-lg">
+      <div className="absolute inset-0 flex flex-col justify-end p-6 pb-4">
+        <h2 className="text-white text-lg md:text-2xl lg:text-3xl font-bold mb-4 leading-tight drop-shadow-lg whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal">
           {title}
         </h2>
         <Link to={buttonLink}>
-          <Button className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold w-fit px-6">
+          <Button className="bg-transparent hover:bg-white/10 text-white font-semibold w-fit px-6 border-2 border-white rounded-none">
             {buttonText}
           </Button>
         </Link>
@@ -227,7 +228,7 @@ export const FeaturedProducts = () => {
   const { t } = useTranslation();
   
   return (
-    <section className="container mx-auto px-4 lg:px-6 pt-10 md:pt-6 pb-6 space-y-12">
+    <section className="container mx-auto px-4 lg:px-6 pt-10 md:pt-6 pb-2 md:pb-6 space-y-4 md:space-y-12">
       {/* First Row: Banner Left, Carousel Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-6">
         <div className="lg:col-span-6">
@@ -254,6 +255,7 @@ export const FeaturedProducts = () => {
             image="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80"
             buttonText={t('featuredProducts.shopNow')}
             buttonLink="/decorative-items"
+            customHeight="min-h-[100px] md:min-h-[220px]"
           />
         </div>
       </div>

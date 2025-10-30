@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Grid3x3, ShoppingCart, User, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +11,34 @@ export const BottomNavbar = () => {
   const { user } = useAuth();
   const { totalItems, subtotal } = useCart();
   const { t } = useTranslation();
+  
+  // Auto-hide on scroll state
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
+  // Handle scroll to show/hide navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when scrolling down, hide when scrolling up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling up - hide navbar
+        setIsVisible(false);
+      } else {
+        // Scrolling down or near top - show navbar
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,7 +66,7 @@ export const BottomNavbar = () => {
     {
       icon: User,
       label: t('bottomNav.signIn'),
-      path: user ? '/dashboard' : '/auth',
+      path: user ? '/dashboard' : '/welcome',
     },
     {
       icon: Menu,
@@ -55,7 +84,12 @@ export const BottomNavbar = () => {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-200 shadow-lg">
+    <nav 
+      className={cn(
+        "md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-200 shadow-lg transition-transform duration-300",
+        isVisible ? "translate-y-0" : "translate-y-full"
+      )}
+    >
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => {
           const Icon = item.icon;

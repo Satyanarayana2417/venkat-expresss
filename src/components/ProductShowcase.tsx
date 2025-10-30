@@ -75,9 +75,9 @@ const CategoryCarousel = ({ title, viewAllLink }: CategoryCarouselProps) => {
   return (
     <div className="mb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
-        <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1">
+      <div className="flex items-center justify-between mb-6 gap-3">
+        <h2 className="text-base md:text-xl lg:text-2xl font-bold">{title}</h2>
+        <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 whitespace-nowrap">
           {t('productShowcase.viewAll')} →
         </Link>
       </div>
@@ -216,9 +216,9 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
   return (
     <div className="mb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
-        <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1">
+      <div className="flex items-center justify-between mb-6 gap-3">
+        <h2 className="text-base md:text-xl lg:text-2xl font-bold">{title}</h2>
+        <Link to={viewAllLink} className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 whitespace-nowrap">
           {t('productShowcase.viewAll')} →
         </Link>
       </div>
@@ -311,7 +311,7 @@ const ProductCarouselShowcase = ({ title, category, viewAllLink, carouselId }: P
                       )}
                     </div>
                     <Link to={`/product/${product.slug}`}>
-                      <h3 className="text-xs md:text-sm text-gray-600 mb-2 line-clamp-2 hover:text-primary transition-colors">
+                      <h3 className="text-xs md:text-sm text-gray-600 mb-2 truncate md:line-clamp-2 hover:text-primary transition-colors">
                         {product.title}
                       </h3>
                     </Link>
@@ -343,7 +343,7 @@ export const ProductShowcase = () => {
   const { t } = useTranslation();
   
   return (
-    <section className="container mx-auto px-4 lg:px-6 py-12 space-y-12">
+    <section className="container mx-auto px-4 lg:px-6 py-4 md:py-12 space-y-6 md:space-y-12">
       {/* Carousel 1: Browse by Category */}
       <CategoryCarousel 
         title={t('productShowcase.getItAllHere')}
