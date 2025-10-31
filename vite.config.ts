@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     emptyOutDir: true, // Ensure clean build
     sourcemap: mode === "development",
+    chunkSizeWarningLimit: 2000, // Increase limit to 2000 kB to suppress warnings
     rollupOptions: {
       output: {
         manualChunks: {
