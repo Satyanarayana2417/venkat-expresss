@@ -86,46 +86,71 @@ const OrderSuccess = () => {
         return;
       }
 
-      try {
-        const orderRef = doc(db, 'orders', orderId);
-        console.log('📄 Fetching from Firestore...');
-        const orderSnap = await getDoc(orderRef);
-        console.log('✅ Document exists:', orderSnap.exists());
+      let retries = 0;
+      const maxRetries = 3;
+      const retryDelay = (attempt: number) => 1000 * Math.pow(2, attempt); // Exponential backoff: 1s, 2s, 4s
 
-        if (orderSnap.exists()) {
-          console.log('✅ Order data retrieved:', orderSnap.data());
-          const data = orderSnap.data();
-          setOrder({
-            id: orderSnap.id,
-            orderId: data.orderId || data.orderNumber || orderSnap.id,
-            orderNumber: data.orderNumber || data.orderId || orderSnap.id,
-            customer: data.customer || data.customerName || 'Customer',
-            email: data.email || '',
-            phone: data.phone || data.phoneNumber || '',
-            items: data.items || [],
-            total: data.total || 0,
-            subtotal: data.subtotal || data.total || 0,
-            orderStatus: data.orderStatus || 'Payment Verification Pending',
-            paymentStatus: data.paymentStatus || 'Pending Verification',
-            paymentMethod: data.paymentMethod || 'UPI',
-            upiTransactionId: data.upiTransactionId || '',
-            date: data.date || new Date().toISOString().split('T')[0],
-            createdAt: data.createdAt,
-            shippingAddress: data.shippingAddress,
-          });
-        } else {
-          console.error('❌ Order document does not exist in Firestore');
-          setError('Order not found in database');
-          toast.error('Order not found in database');
+      const attemptFetch = async (): Promise<void> => {
+        try {
+          const orderRef = doc(db, 'orders', orderId);
+          console.log(`📄 Fetching from Firestore (attempt ${retries + 1}/${maxRetries})...`);
+          const orderSnap = await getDoc(orderRef);
+          console.log('✅ Document exists:', orderSnap.exists());
+
+          if (orderSnap.exists()) {
+            console.log('✅ Order data retrieved:', orderSnap.data());
+            const data = orderSnap.data();
+            setOrder({
+              id: orderSnap.id,
+              orderId: data.orderId || data.orderNumber || orderSnap.id,
+              orderNumber: data.orderNumber || data.orderId || orderSnap.id,
+              customer: data.customer || data.customerName || 'Customer',
+              email: data.email || '',
+              phone: data.phone || data.phoneNumber || '',
+              items: data.items || [],
+              total: data.total || 0,
+              subtotal: data.subtotal || data.total || 0,
+              orderStatus: data.orderStatus || 'Payment Verification Pending',
+              paymentStatus: data.paymentStatus || 'Pending Verification',
+              paymentMethod: data.paymentMethod || 'UPI',
+              upiTransactionId: data.upiTransactionId || '',
+              date: data.date || new Date().toISOString().split('T')[0],
+              createdAt: data.createdAt,
+              shippingAddress: data.shippingAddress,
+            });
+            setLoading(false);
+            return;
+          } else {
+            // Document not found yet, retry with backoff
+            if (retries < maxRetries) {
+              console.warn(`⏳ Order document not found yet. Retrying in ${retryDelay(retries)}ms...`);
+              retries++;
+              setTimeout(attemptFetch, retryDelay(retries - 1));
+            } else {
+              console.error('❌ Order document not found after maximum retries');
+              setError('Order not found in database');
+              toast.error('Order not found in database');
+              setLoading(false);
+            }
+          }
+        } catch (err: any) {
+          console.error('❌ Error fetching order:', err);
+          console.error('Error details:', err?.message, err?.code);
+          
+          // Retry on error
+          if (retries < maxRetries) {
+            console.warn(`⏳ Fetch failed. Retrying in ${retryDelay(retries)}ms...`);
+            retries++;
+            setTimeout(attemptFetch, retryDelay(retries - 1));
+          } else {
+            setError('Failed to load order details: ' + (err?.message || 'Unknown error'));
+            toast.error('Failed to load order details');
+            setLoading(false);
+          }
         }
-      } catch (err: any) {
-        console.error('❌ Error fetching order:', err);
-        console.error('Error details:', err?.message, err?.code);
-        setError('Failed to load order details: ' + (err?.message || 'Unknown error'));
-        toast.error('Failed to load order details');
-      } finally {
-        setLoading(false);
-      }
+      };
+
+      attemptFetch();
     };
 
     fetchOrderDetails();
