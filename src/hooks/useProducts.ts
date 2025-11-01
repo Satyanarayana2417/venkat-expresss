@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from '@/components/ProductCard';
 
@@ -13,25 +13,51 @@ export const useProducts = () => {
       setLoading(true);
       const productsRef = collection(db, 'products');
       const q = query(productsRef, orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
       
-      const fetchedProducts = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Product[];
-      
-      setProducts(fetchedProducts);
-      setError(null);
+      // Set up real-time listener with onSnapshot
+      const unsubscribe = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const fetchedProducts = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as Product[];
+          
+          setProducts(fetchedProducts);
+          setError(null);
+          setLoading(false);
+        },
+        (err) => {
+          console.error('Error listening to products:', err);
+          setError(err.message);
+          setLoading(false);
+        }
+      );
+
+      // Return unsubscribe function for cleanup
+      return unsubscribe;
     } catch (err: any) {
       setError(err.message);
-      console.error('Error fetching products:', err);
-    } finally {
+      console.error('Error setting up products listener:', err);
       setLoading(false);
+      return () => {}; // Return empty cleanup function if setup fails
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    let unsubscribe: (() => void) | undefined;
+
+    // Call fetchProducts and get the unsubscribe function
+    fetchProducts().then((unsub) => {
+      unsubscribe = unsub;
+    });
+
+    // Cleanup: unsubscribe from the listener when component unmounts
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const addProduct = async (productData: Partial<Omit<Product, 'id'>>) => {
@@ -44,7 +70,7 @@ export const useProducts = () => {
         ...productData,
         createdAt: new Date().toISOString(),
       });
-      await fetchProducts();
+      // No need to manually fetch - the real-time listener will update products state automatically
     } catch (err: any) {
       throw new Error(err.message);
     }
@@ -57,7 +83,7 @@ export const useProducts = () => {
         ...productData,
         updatedAt: new Date().toISOString(),
       });
-      await fetchProducts();
+      // No need to manually fetch - the real-time listener will update products state automatically
     } catch (err: any) {
       throw new Error(err.message);
     }
@@ -67,7 +93,7 @@ export const useProducts = () => {
     try {
       const productRef = doc(db, 'products', id);
       await deleteDoc(productRef);
-      await fetchProducts();
+      // No need to manually fetch - the real-time listener will update products state automatically
     } catch (err: any) {
       throw new Error(err.message);
     }
@@ -77,7 +103,6 @@ export const useProducts = () => {
     products,
     loading,
     error,
-    fetchProducts,
     addProduct,
     updateProduct,
     deleteProduct,

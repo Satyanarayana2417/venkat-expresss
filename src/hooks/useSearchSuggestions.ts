@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Product } from '@/components/ProductCard';
 
@@ -26,13 +26,14 @@ export const useSearchSuggestions = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Fetch popular products on mount (for showing on focus)
   useEffect(() => {
-    const fetchPopularProducts = async () => {
+    const fetchPopularProducts = () => {
       try {
         const productsRef = collection(db, 'products');
-        // Get products with 'featured' tag or recent products
+        // Set up real-time listener for popular products
         const q = query(
           productsRef, 
           where('inStock', '==', true),
@@ -40,25 +41,46 @@ export const useSearchSuggestions = ({
           limit(5)
         );
         
-        const snapshot = await getDocs(q);
-        const products = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Product[];
-        
-        setPopularProducts(products);
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            const products = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            })) as Product[];
+            
+            setPopularProducts(products);
+          },
+          (err) => {
+            console.error('Error fetching popular products:', err);
+          }
+        );
+
+        return unsubscribe;
       } catch (err) {
-        console.error('Error fetching popular products:', err);
+        console.error('Error setting up popular products listener:', err);
+        return () => {};
       }
     };
 
-    fetchPopularProducts();
+    const unsubscribe = fetchPopularProducts();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   // Debounced search effect
   useEffect(() => {
     if (!enabled) {
       setSuggestions([]);
+      // Clean up previous listener
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
       return;
     }
 
@@ -71,11 +93,16 @@ export const useSearchSuggestions = ({
     if (!searchQuery.trim()) {
       setSuggestions([]);
       setError(null);
+      // Clean up listener if it exists
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
       return;
     }
 
     // Set new debounce timer (300ms delay)
-    debounceTimerRef.current = setTimeout(async () => {
+    debounceTimerRef.current = setTimeout(() => {
       setLoading(true);
       setError(null);
 
@@ -83,7 +110,7 @@ export const useSearchSuggestions = ({
         const productsRef = collection(db, 'products');
         const searchLower = searchQuery.toLowerCase().trim();
         
-        // Fetch all products and filter client-side for better search
+        // Set up real-time listener for search results
         // Note: For production, consider using Algolia or similar for better search
         const q = query(
           productsRef,
@@ -92,27 +119,45 @@ export const useSearchSuggestions = ({
           limit(50) // Get more results to filter client-side
         );
         
-        const snapshot = await getDocs(q);
-        const allProducts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Product[];
-        
-        // Filter products where title contains search query (case-insensitive)
-        const filtered = allProducts.filter(product => 
-          product.title.toLowerCase().includes(searchLower)
-        ).slice(0, maxResults);
-        
-        setSuggestions(filtered);
-        
-        if (filtered.length === 0) {
-          setError('No products found');
+        // Clean up previous listener if it exists
+        if (unsubscribeRef.current) {
+          unsubscribeRef.current();
         }
+
+        // Set up new real-time listener
+        unsubscribeRef.current = onSnapshot(
+          q,
+          (snapshot) => {
+            const allProducts = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            })) as Product[];
+            
+            // Filter products where title contains search query (case-insensitive)
+            const filtered = allProducts.filter(product => 
+              product.title.toLowerCase().includes(searchLower)
+            ).slice(0, maxResults);
+            
+            setSuggestions(filtered);
+            
+            if (filtered.length === 0) {
+              setError('No products found');
+            } else {
+              setError(null);
+            }
+            setLoading(false);
+          },
+          (err) => {
+            console.error('Search error:', err);
+            setError(err.message || 'Failed to search products');
+            setSuggestions([]);
+            setLoading(false);
+          }
+        );
       } catch (err: any) {
-        console.error('Search error:', err);
+        console.error('Search setup error:', err);
         setError(err.message || 'Failed to search products');
         setSuggestions([]);
-      } finally {
         setLoading(false);
       }
     }, 300); // 300ms debounce delay
@@ -122,8 +167,20 @@ export const useSearchSuggestions = ({
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
+      // Don't unsubscribe here - let it continue listening
+      // It will be cleaned up when component unmounts or query changes
     };
   }, [searchQuery, enabled, maxResults]);
+
+  // Cleanup all listeners on component unmount
+  useEffect(() => {
+    return () => {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+    };
+  }, []);
 
   return {
     suggestions,

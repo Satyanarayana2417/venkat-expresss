@@ -5,7 +5,7 @@ import { SearchProductCard } from '@/components/SearchProductCard';
 import { SearchProductListItem } from '@/components/SearchProductListItem';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Search, Loader2, SlidersHorizontal, Grid, List, X, ChevronDown, ShoppingCart } from 'lucide-react';
-import { collection, query as firestoreQuery, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query as firestoreQuery, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Slider } from '@/components/ui/slider';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,12 +49,21 @@ const SearchResults = () => {
   }, [searchQuery]);
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
     if (searchQuery) {
-      searchProducts(searchQuery);
+      unsubscribe = searchProducts(searchQuery);
     }
+
+    // Cleanup: unsubscribe from the listener when component unmounts or dependencies change
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [searchQuery, categoryFilter, sortBy, priceRange]);
 
-  const searchProducts = async (query: string) => {
+  const searchProducts = (query: string) => {
     if (!query.trim()) {
       setProducts([]);
       return;
@@ -65,47 +74,61 @@ const SearchResults = () => {
       const productsRef = collection(db, 'products');
       const searchLower = query.toLowerCase().trim();
       
-      // Fetch all in-stock products
+      // Set up real-time listener for all in-stock products
       const q = firestoreQuery(
         productsRef,
         where('inStock', '==', true),
         orderBy('title')
       );
       
-      const snapshot = await getDocs(q);
-      const allProducts = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...(doc.data() as Omit<Product, 'id'>)
-      })) as Product[];
-      
-      // Filter products where title contains search query (case-insensitive)
-      // Search is now strictly title-based for more precise results
-      let filtered = allProducts.filter(product => 
-        product.title.toLowerCase().includes(searchLower)
+      // Use onSnapshot for real-time updates
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const allProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...(doc.data() as Omit<Product, 'id'>)
+          })) as Product[];
+          
+          // Filter products where title contains search query (case-insensitive)
+          // Search is now strictly title-based for more precise results
+          let filtered = allProducts.filter(product => 
+            product.title.toLowerCase().includes(searchLower)
+          );
+
+          // Apply category filter
+          if (categoryFilter !== 'all') {
+            filtered = filtered.filter(p => p.category === categoryFilter);
+          }
+
+          // Apply price range filter
+          filtered = filtered.filter(p => p.priceINR >= priceRange[0] && p.priceINR <= priceRange[1]);
+
+          // Apply sorting
+          if (sortBy === 'price-low') {
+            filtered.sort((a, b) => a.priceINR - b.priceINR);
+          } else if (sortBy === 'price-high') {
+            filtered.sort((a, b) => b.priceINR - a.priceINR);
+          } else if (sortBy === 'name') {
+            filtered.sort((a, b) => a.title.localeCompare(b.title));
+          }
+          
+          setProducts(filtered);
+          setLoading(false);
+        },
+        (err) => {
+          console.error('Search error:', err);
+          setLoading(false);
+        }
       );
 
-      // Apply category filter
-      if (categoryFilter !== 'all') {
-        filtered = filtered.filter(p => p.category === categoryFilter);
-      }
-
-      // Apply price range filter
-      filtered = filtered.filter(p => p.priceINR >= priceRange[0] && p.priceINR <= priceRange[1]);
-
-      // Apply sorting
-      if (sortBy === 'price-low') {
-        filtered.sort((a, b) => a.priceINR - b.priceINR);
-      } else if (sortBy === 'price-high') {
-        filtered.sort((a, b) => b.priceINR - a.priceINR);
-      } else if (sortBy === 'name') {
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-      }
-      
-      setProducts(filtered);
+      // Store unsubscribe function for cleanup when component unmounts
+      // We need to return it or store it for cleanup
+      return unsubscribe;
     } catch (err) {
-      console.error('Search error:', err);
-    } finally {
+      console.error('Search setup error:', err);
       setLoading(false);
+      return () => {}; // Return empty cleanup function if setup fails
     }
   };
 
