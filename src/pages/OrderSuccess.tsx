@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -65,6 +66,7 @@ interface OrderData {
 const OrderSuccess = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<OrderData | null>(null);
   const [error, setError] = useState('');
@@ -73,7 +75,8 @@ const OrderSuccess = () => {
   useEffect(() => {
     console.log('📍 OrderSuccess component mounted');
     console.log('📍 Order ID from URL:', orderId);
-  }, [orderId]);
+    console.log('👤 Authenticated user:', user?.uid, user?.email);
+  }, [orderId, user]);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -94,12 +97,15 @@ const OrderSuccess = () => {
         try {
           const orderRef = doc(db, 'orders', orderId);
           console.log(`📄 Fetching from Firestore (attempt ${retries + 1}/${maxRetries})...`);
+          console.log(`📄 Looking for document with ID: ${orderId}`);
           const orderSnap = await getDoc(orderRef);
           console.log('✅ Document exists:', orderSnap.exists());
-
+          
           if (orderSnap.exists()) {
-            console.log('✅ Order data retrieved:', orderSnap.data());
             const data = orderSnap.data();
+            console.log('✅ Order data retrieved:', data);
+            console.log('📍 Order userId:', data.userId, '| Current user uid:', user?.uid, '| Match:', data.userId === user?.uid);
+            
             setOrder({
               id: orderSnap.id,
               orderId: data.orderId || data.orderNumber || orderSnap.id,
@@ -175,6 +181,8 @@ const OrderSuccess = () => {
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-gray-600">Loading order details...</p>
+          <p className="text-sm text-gray-500 mt-2">Order ID: {orderId}</p>
+          <p className="text-xs text-gray-400 mt-2">Check console (F12) for debug logs</p>
         </div>
       </div>
     );
