@@ -69,9 +69,18 @@ const OrderSuccess = () => {
   const [order, setOrder] = useState<OrderData | null>(null);
   const [error, setError] = useState('');
 
+  // Debug logging
+  useEffect(() => {
+    console.log('📍 OrderSuccess component mounted');
+    console.log('📍 Order ID from URL:', orderId);
+  }, [orderId]);
+
   useEffect(() => {
     const fetchOrderDetails = async () => {
+      console.log('🔍 Fetching order details for ID:', orderId);
+      
       if (!orderId) {
+        console.error('❌ Order ID not found');
         setError('Order ID not found');
         setLoading(false);
         return;
@@ -79,9 +88,12 @@ const OrderSuccess = () => {
 
       try {
         const orderRef = doc(db, 'orders', orderId);
+        console.log('📄 Fetching from Firestore...');
         const orderSnap = await getDoc(orderRef);
+        console.log('✅ Document exists:', orderSnap.exists());
 
         if (orderSnap.exists()) {
+          console.log('✅ Order data retrieved:', orderSnap.data());
           const data = orderSnap.data();
           setOrder({
             id: orderSnap.id,
@@ -102,12 +114,14 @@ const OrderSuccess = () => {
             shippingAddress: data.shippingAddress,
           });
         } else {
-          setError('Order not found');
-          toast.error('Order not found');
+          console.error('❌ Order document does not exist in Firestore');
+          setError('Order not found in database');
+          toast.error('Order not found in database');
         }
-      } catch (err) {
-        console.error('Error fetching order:', err);
-        setError('Failed to load order details');
+      } catch (err: any) {
+        console.error('❌ Error fetching order:', err);
+        console.error('Error details:', err?.message, err?.code);
+        setError('Failed to load order details: ' + (err?.message || 'Unknown error'));
         toast.error('Failed to load order details');
       } finally {
         setLoading(false);
