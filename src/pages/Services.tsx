@@ -235,7 +235,6 @@ const Services = () => {
         t('services.insuranceAvailable'),
         t('services.realTimeTracking'),
       ],
-      pricing: t('services.startingFrom2100'),
     },
     {
       title: t('services.weBuyForYou'),
@@ -246,7 +245,6 @@ const Services = () => {
         t('services.bulkConsolidation'),
         t('services.expressShippingFeature'),
       ],
-      pricing: t('services.serviceFeeItemCost'),
     },
     {
       title: t('services.expressShipping'),
@@ -257,7 +255,6 @@ const Services = () => {
         t('services.fullInsurance'),
         t('services.priorityHandling'),
       ],
-      pricing: t('services.startingFrom3800'),
     },
   ];
 
@@ -528,12 +525,6 @@ const Services = () => {
                       <span className="text-sm text-gray-700">{feature}</span>
                     </div>
                   ))}
-                </div>
-
-                <div className="pt-4 border-t border-gray-200">
-                  <p className="text-lg font-bold text-gray-900">
-                    {service.pricing}
-                  </p>
                 </div>
               </CardContent>
             </Card>

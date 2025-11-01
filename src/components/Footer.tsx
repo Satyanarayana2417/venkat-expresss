@@ -68,7 +68,10 @@ export const Footer = () => {
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-sm text-white/60">
           <p>&copy; {new Date().getFullYear()} {t('footer.copyright')}</p>
-          <div className="flex justify-center gap-4 mt-2">
+          <p className="mt-1">
+            {t('footer.designedBy')} <span className="text-accent font-semibold">DREAM TEAM SERVICES</span>
+          </p>
+          <div className="flex justify-center gap-4 mt-4">
             <Link to="/privacy" className="hover:text-accent transition-colors">{t('footer.privacyPolicy')}</Link>
             <Link to="/terms" className="hover:text-accent transition-colors">{t('footer.termsOfService')}</Link>
           </div>

@@ -37,6 +37,7 @@ const Payment = () => {
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string>('');
   const [uploadingScreenshot, setUploadingScreenshot] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Redirect if cart is empty
   useEffect(() => {
@@ -160,7 +161,15 @@ const Payment = () => {
       
       toast.success('Order placed successfully! 🎉');
       
-      // Navigate to order success page immediately
+      // Show processing state
+      setIsProcessing(true);
+      
+      // Add a small delay to ensure Firestore has propagated the data
+      // This prevents race conditions on the OrderSuccess page
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Navigate to order success page with order ID
+      // The OrderSuccess page will fetch from Firestore and display the confirmation
       navigate(`/order/success/${firestoreOrderId}`);
       
     } catch (error: any) {
@@ -174,6 +183,41 @@ const Payment = () => {
   // Main payment screen
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Processing Modal Overlay */}
+      <AnimatePresence>
+        {isProcessing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-lg p-8 shadow-xl max-w-sm w-full mx-4"
+            >
+              <div className="flex flex-col items-center justify-center gap-4">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Loader2 className="h-12 w-12 text-primary" />
+                </motion.div>
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Confirming Order
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Please wait while we process your order...
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">

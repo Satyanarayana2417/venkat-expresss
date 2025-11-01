@@ -437,10 +437,18 @@ const About = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="text-center"
                 >
-                  <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${stat.color} p-0.5`}>
-                    <div className="w-full h-full bg-white rounded-xl flex items-center justify-center">
-                      <Icon className={`h-6 w-6 md:h-7 md:w-7 bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`} style={{ WebkitTextFillColor: 'transparent' }} />
-                    </div>
+                  <div className={`w-12 h-12 md:w-14 md:h-14 mx-auto mb-4 rounded-2xl border-3 flex items-center justify-center`} style={{
+                    borderColor: stat.color.includes('orange') ? '#EA580C' : 
+                                 stat.color.includes('blue') ? '#3B82F6' :
+                                 stat.color.includes('purple') ? '#A855F7' :
+                                 stat.color.includes('green') ? '#10B981' : '#000'
+                  }}>
+                    <Icon className={`h-7 w-7 md:h-8 md:w-8`} style={{
+                      color: stat.color.includes('orange') ? '#EA580C' : 
+                             stat.color.includes('blue') ? '#3B82F6' :
+                             stat.color.includes('purple') ? '#A855F7' :
+                             stat.color.includes('green') ? '#10B981' : '#000'
+                    }} />
                   </div>
                   <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
                     {stat.format ? stat.format(count) : count}{stat.suffix}
