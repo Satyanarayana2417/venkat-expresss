@@ -371,6 +371,7 @@ export const AdminProductForm = () => {
                     value={formData.priceINR}
                     onChange={(e) => setFormData({ ...formData, priceINR: e.target.value === '' ? '' : Number(e.target.value) })}
                     min="0"
+                    max="100000000"
                     step="0.01"
                     placeholder="Enter price"
                     required
