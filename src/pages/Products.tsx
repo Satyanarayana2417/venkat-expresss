@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProducts } from '@/hooks/useProducts';
 import { useCart } from '@/contexts/CartContext';
@@ -25,7 +25,37 @@ const Products = () => {
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  
+  // Dynamic price limits based on actual product prices
+  const priceLimits = useMemo(() => {
+    if (!products || products.length === 0) {
+      return { min: 0, max: 1000 }; // Default fallback when no products
+    }
+    
+    const prices = products.map(p => p.priceINR).filter(price => typeof price === 'number' && !isNaN(price));
+    
+    if (prices.length === 0) {
+      return { min: 0, max: 1000 }; // Fallback if no valid prices
+    }
+    
+    if (prices.length === 1) {
+      // Single product: set min to 0 and max to product price (or slightly higher)
+      return { min: 0, max: Math.max(prices[0], 100) };
+    }
+    
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    
+    return { min: minPrice, max: maxPrice };
+  }, [products]);
+  
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  
+  // Update price range when price limits change
+  useEffect(() => {
+    setPriceRange([priceLimits.min, priceLimits.max]);
+  }, [priceLimits]);
+  
   const [openSections, setOpenSections] = useState({
     category: true,
     sortBy: false,
@@ -222,13 +252,14 @@ const Products = () => {
               <Slider
                 value={priceRange}
                 onValueChange={(value) => setPriceRange(value as [number, number])}
-                max={10000}
-                step={100}
+                min={priceLimits.min}
+                max={priceLimits.max}
+                step={Math.max(1, Math.floor((priceLimits.max - priceLimits.min) / 100))}
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-gray-600">
-                <span>₹{priceRange[0].toLocaleString()}</span>
-                <span>₹{priceRange[1].toLocaleString()}</span>
+                <span>₹{priceLimits.min.toLocaleString()}</span>
+                <span>₹{priceLimits.max.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -394,13 +425,14 @@ const Products = () => {
                       <Slider
                         value={priceRange}
                         onValueChange={(value) => setPriceRange(value as [number, number])}
-                        max={10000}
-                        step={100}
+                        min={priceLimits.min}
+                        max={priceLimits.max}
+                        step={Math.max(1, Math.floor((priceLimits.max - priceLimits.min) / 100))}
                         className="w-full"
                       />
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">₹{priceRange[0].toLocaleString()}</span>
-                        <span className="text-muted-foreground">₹{priceRange[1].toLocaleString()}</span>
+                        <span className="text-muted-foreground">₹{priceLimits.min.toLocaleString()}</span>
+                        <span className="text-muted-foreground">₹{priceLimits.max.toLocaleString()}</span>
                       </div>
                     </div>
                   )}
