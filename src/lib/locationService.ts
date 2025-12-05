@@ -405,9 +405,20 @@ export const loadLocationFromStorage = (): LocationData | null => {
       return null;
     }
 
-    return JSON.parse(locationStr);
+    const parsedLocation = JSON.parse(locationStr);
+    
+    // Validate the parsed location has required fields
+    if (!parsedLocation || typeof parsedLocation.city !== 'string' || typeof parsedLocation.country !== 'string') {
+      console.warn('Invalid location data in localStorage, clearing...');
+      clearLocationFromStorage();
+      return null;
+    }
+
+    return parsedLocation;
   } catch (error) {
     console.error('Error loading location from storage:', error);
+    // Clear corrupted data to prevent future errors
+    clearLocationFromStorage();
     return null;
   }
 };

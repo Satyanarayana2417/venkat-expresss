@@ -23,6 +23,20 @@ export class ErrorBoundary extends React.Component<Props, State> {
     console.error('Error caught by boundary:', error, errorInfo);
   }
 
+  handleClearCacheAndReload = () => {
+    try {
+      // Clear localStorage
+      localStorage.clear();
+      // Clear sessionStorage
+      sessionStorage.clear();
+      console.log('Cache cleared successfully');
+    } catch (e) {
+      console.error('Error clearing cache:', e);
+    }
+    // Reload the page
+    window.location.reload();
+  };
+
   render() {
     if (this.state.hasError) {
       return (
@@ -32,7 +46,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               Something went wrong
             </h1>
             <p className="text-gray-600 mb-4">
-              We're sorry, but something unexpected happened.
+              We're sorry, but something unexpected happened. This might be due to cached data.
             </p>
             {this.state.error && (
               <details className="text-left text-sm text-gray-500 mb-4 p-3 bg-gray-50 rounded">
@@ -44,12 +58,20 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 </p>
               </details>
             )}
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Reload Page
-            </button>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Reload Page
+              </button>
+              <button
+                onClick={this.handleClearCacheAndReload}
+                className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+              >
+                Clear Cache & Reload
+              </button>
+            </div>
           </div>
         </div>
       );

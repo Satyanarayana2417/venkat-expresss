@@ -9,10 +9,32 @@ import ta from './locales/ta.json';
 import kn from './locales/kn.json';
 import ml from './locales/ml.json';
 
+// Valid language codes
+const VALID_LANGUAGES = ['en', 'hi', 'te', 'ta', 'kn', 'ml'];
+
 // Get saved language from localStorage or default to 'en'
 const getSavedLanguage = (): string => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('userLanguage') || 'en';
+    try {
+      const savedLang = localStorage.getItem('userLanguage');
+      // Validate that the saved language is a valid option
+      if (savedLang && VALID_LANGUAGES.includes(savedLang)) {
+        return savedLang;
+      }
+      // Clear invalid language data
+      if (savedLang) {
+        console.warn('Invalid language in localStorage, resetting to default');
+        localStorage.removeItem('userLanguage');
+      }
+    } catch (error) {
+      console.error('Error reading language from localStorage:', error);
+      // Clear potentially corrupted data
+      try {
+        localStorage.removeItem('userLanguage');
+      } catch (e) {
+        // localStorage might be completely inaccessible
+      }
+    }
   }
   return 'en';
 };

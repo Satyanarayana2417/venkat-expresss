@@ -9,8 +9,65 @@ import "./index.css";
 import "./i18n/config";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
+// Storage version for managing cache invalidation
+const STORAGE_VERSION = '1.0.1';
+const STORAGE_VERSION_KEY = 'venkat-express-storage-version';
+
+/**
+ * Validate and clean localStorage data to prevent app crashes
+ * This runs before the app mounts to ensure clean state
+ */
+const validateAndCleanStorage = (): void => {
+  try {
+    const currentVersion = localStorage.getItem(STORAGE_VERSION_KEY);
+    
+    // If storage version doesn't match, clear potentially stale/corrupted data
+    if (currentVersion !== STORAGE_VERSION) {
+      console.log('Storage version mismatch, cleaning up old data...');
+      
+      // List of keys to validate (but not delete immediately)
+      const keysToValidate = [
+        'venkat-express-cart-guest',
+        'venkat-express-wishlist-guest',
+        'userLocation',
+        'userLanguage'
+      ];
+
+      keysToValidate.forEach(key => {
+        try {
+          const value = localStorage.getItem(key);
+          if (value) {
+            // Try to parse JSON keys
+            if (key !== 'userLanguage') {
+              JSON.parse(value);
+            }
+          }
+        } catch (error) {
+          console.warn(`Removing corrupted localStorage key: ${key}`);
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Update storage version
+      localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
+    }
+  } catch (error) {
+    console.error('Error validating localStorage:', error);
+    // If localStorage is completely broken, try to clear it
+    try {
+      localStorage.clear();
+      localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION);
+    } catch (e) {
+      console.error('Could not clear localStorage:', e);
+    }
+  }
+};
+
 // Ensure we're in a browser environment before accessing browser APIs
 if (typeof window !== 'undefined') {
+  // Validate storage before anything else
+  validateAndCleanStorage();
+  
   // Register Service Worker for PWA
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

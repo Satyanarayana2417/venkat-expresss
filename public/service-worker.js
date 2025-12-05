@@ -1,5 +1,6 @@
 // Service Worker for Venkat Express PWA
-const CACHE_NAME = 'venkat-express-v1';
+// Increment version when deploying updates to force cache refresh
+const CACHE_NAME = 'venkat-express-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -24,6 +25,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -34,8 +36,33 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// Fetch event - serve from cache when offline, otherwise fetch from network
+// Fetch event - network first for HTML/JS, cache first for assets
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // For HTML and JS files, try network first (ensures fresh code)
+  if (event.request.mode === 'navigate' || 
+      url.pathname.endsWith('.js') || 
+      url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache the new response
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // If network fails, try cache
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+  
+  // For other requests, use cache first
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
